@@ -19,6 +19,7 @@ public class ClientGUI extends javax.swing.JFrame {
      */
     public ClientGUI() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -67,7 +68,7 @@ public class ClientGUI extends javax.swing.JFrame {
         buttonOntario = new javax.swing.JButton();
         buttonQuebec = new javax.swing.JButton();
         buttonNorthWestTerritory = new javax.swing.JButton();
-        buttonKamchatka33 = new javax.swing.JButton();
+        buttonAratopia = new javax.swing.JButton();
         buttonAlaska = new javax.swing.JButton();
         buttonGreenland = new javax.swing.JButton();
         buttonCihanland = new javax.swing.JButton();
@@ -81,15 +82,27 @@ public class ClientGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         textareaWarLogs = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        buttonAddSoldier = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        labelChosenTerritory = new javax.swing.JLabel();
-        labelSoldierAmoun = new javax.swing.JLabel();
         buttonFinishTurn = new javax.swing.JButton();
-        buttonLeaveGame = new javax.swing.JButton();
-        comboBoxSoldiearAmount = new javax.swing.JComboBox<>();
+        buttonSurrender = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        labelCurrentPlayingPlayerUI = new javax.swing.JLabel();
+        labelCurrentPlayerSoldierNumberUI = new javax.swing.JLabel();
+        labelCurrentPlayerTerritoryNumberUI = new javax.swing.JLabel();
+        PlayerName = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        labelPlayerSoldierNumberUI = new javax.swing.JLabel();
+        labelPlayerTerritoryNumberUI = new javax.swing.JLabel();
+        labelPlayerEarnedSoldierPerTurnUI = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        buttonLeaveGame1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -209,8 +222,13 @@ public class ClientGUI extends javax.swing.JFrame {
         buttonNorthWestTerritory.setText("0");
         jPanel1.add(buttonNorthWestTerritory, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 130, -1, -1));
 
-        buttonKamchatka33.setText("0");
-        jPanel1.add(buttonKamchatka33, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
+        buttonAratopia.setText("0");
+        buttonAratopia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAratopiaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(buttonAratopia, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
 
         buttonAlaska.setText("0");
         jPanel1.add(buttonAlaska, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
@@ -251,25 +269,145 @@ public class ClientGUI extends javax.swing.JFrame {
         textareaWarLogs.setRows(5);
         jScrollPane1.setViewportView(textareaWarLogs);
 
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         jLabel2.setText("War Logs");
 
-        jLabel3.setText("Player Turn:");
-
-        jLabel4.setText("Total Soldiers:");
-
-        buttonAddSoldier.setText("Add Soldier");
-
-        jLabel5.setText("Assign Soldiers:");
-
-        labelChosenTerritory.setText("Chosen Territory:");
-
-        labelSoldierAmoun.setText("Number of Soldier");
-
         buttonFinishTurn.setText("Finish Turn");
+        buttonFinishTurn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonFinishTurnActionPerformed(evt);
+            }
+        });
 
-        buttonLeaveGame.setText("Leave Game");
+        buttonSurrender.setText("Surrender");
+        buttonSurrender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSurrenderActionPerformed(evt);
+            }
+        });
 
-        comboBoxSoldiearAmount.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel6.setText("Player Turn:");
+
+        jLabel10.setText("Total Soldiers:");
+
+        jLabel11.setText("Territories");
+
+        labelCurrentPlayingPlayerUI.setText("Player");
+
+        labelCurrentPlayerSoldierNumberUI.setText("Player");
+
+        labelCurrentPlayerTerritoryNumberUI.setText("Player");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelCurrentPlayingPlayerUI))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelCurrentPlayerSoldierNumberUI))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelCurrentPlayerTerritoryNumberUI)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(labelCurrentPlayingPlayerUI))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(labelCurrentPlayerSoldierNumberUI))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(labelCurrentPlayerTerritoryNumberUI))
+                .addContainerGap(13, Short.MAX_VALUE))
+        );
+
+        PlayerName.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
+        PlayerName.setText("Player");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/Riskgame_logosmall.png"))); // NOI18N
+
+        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
+        jLabel12.setText("Game State:");
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel14.setText("Your Soldiers:");
+
+        jLabel15.setText("Your Territories:");
+
+        jLabel16.setText("Soldier Per Turn:");
+
+        labelPlayerSoldierNumberUI.setText("0");
+
+        labelPlayerTerritoryNumberUI.setText("0");
+
+        labelPlayerEarnedSoldierPerTurnUI.setText("0");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelPlayerSoldierNumberUI))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelPlayerTerritoryNumberUI))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelPlayerEarnedSoldierPerTurnUI)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(labelPlayerSoldierNumberUI))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(labelPlayerTerritoryNumberUI))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(labelPlayerEarnedSoldierPerTurnUI))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+
+        jLabel13.setText("STANDBY");
+
+        buttonLeaveGame1.setText("Leave");
+        buttonLeaveGame1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonLeaveGame1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -278,24 +416,29 @@ public class ClientGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(labelSoldierAmoun)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(comboBoxSoldiearAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel4)
-                        .addComponent(jLabel5)
-                        .addComponent(labelChosenTerritory)
-                        .addComponent(buttonAddSoldier, javax.swing.GroupLayout.Alignment.TRAILING))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(buttonFinishTurn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(buttonLeaveGame))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonSurrender)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonLeaveGame1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2)
+                                .addComponent(PlayerName)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel12)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 5, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -303,30 +446,31 @@ public class ClientGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel4)
-                        .addGap(12, 12, 12)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(labelChosenTerritory)
-                        .addGap(25, 25, 25)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(PlayerName)
+                        .addGap(5, 5, 5)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(labelSoldierAmoun)
-                            .addComponent(comboBoxSoldiearAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonAddSoldier)
-                        .addGap(38, 38, 38)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel13))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(buttonFinishTurn)
-                            .addComponent(buttonLeaveGame))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(buttonSurrender)
+                            .addComponent(buttonLeaveGame1))
+                        .addGap(29, 29, 29))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
@@ -340,6 +484,22 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonMongoliaActionPerformed
 
+    private void buttonAratopiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAratopiaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonAratopiaActionPerformed
+
+    private void buttonSurrenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSurrenderActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonSurrenderActionPerformed
+
+    private void buttonLeaveGame1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLeaveGame1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonLeaveGame1ActionPerformed
+
+    private void buttonFinishTurnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFinishTurnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonFinishTurnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -351,7 +511,7 @@ public class ClientGUI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("MacOS".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -376,10 +536,11 @@ public class ClientGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonAddSoldier;
+    private javax.swing.JLabel PlayerName;
     private javax.swing.JButton buttonAfghanistan;
     private javax.swing.JButton buttonAlaska;
     private javax.swing.JButton buttonAlberta;
+    private javax.swing.JButton buttonAratopia;
     private javax.swing.JButton buttonArgentina;
     private javax.swing.JButton buttonBrazil;
     private javax.swing.JButton buttonCentralAmerica;
@@ -400,9 +561,8 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonIzzettinia;
     private javax.swing.JButton buttonJapan;
     private javax.swing.JButton buttonKamchatka1;
-    private javax.swing.JButton buttonKamchatka33;
     private javax.swing.JButton buttonLatifland;
-    private javax.swing.JButton buttonLeaveGame;
+    private javax.swing.JButton buttonLeaveGame1;
     private javax.swing.JButton buttonMiddleEast;
     private javax.swing.JButton buttonMongolia;
     private javax.swing.JButton buttonNewGuinea;
@@ -418,6 +578,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonSlam;
     private javax.swing.JButton buttonSouthAfrica;
     private javax.swing.JButton buttonSouthernEurope;
+    private javax.swing.JButton buttonSurrender;
     private javax.swing.JButton buttonUkranie;
     private javax.swing.JButton buttonUral;
     private javax.swing.JButton buttonVenezuela;
@@ -425,16 +586,27 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonWesternEurope;
     private javax.swing.JButton buttonWesternUnitedStates;
     private javax.swing.JButton buttonYakutsk;
-    private javax.swing.JComboBox<String> comboBoxSoldiearAmount;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel labelChosenTerritory;
+    private javax.swing.JLabel labelCurrentPlayerSoldierNumberUI;
+    private javax.swing.JLabel labelCurrentPlayerTerritoryNumberUI;
+    private javax.swing.JLabel labelCurrentPlayingPlayerUI;
     private javax.swing.JLabel labelMapImage;
-    private javax.swing.JLabel labelSoldierAmoun;
+    private javax.swing.JLabel labelPlayerEarnedSoldierPerTurnUI;
+    private javax.swing.JLabel labelPlayerSoldierNumberUI;
+    private javax.swing.JLabel labelPlayerTerritoryNumberUI;
     private javax.swing.JTextArea textareaWarLogs;
     // End of variables declaration//GEN-END:variables
 }

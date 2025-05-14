@@ -4,17 +4,52 @@
  */
 package com.izzettinozmen.riskgame;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author ifozmen
  */
 public class StartScreen extends javax.swing.JFrame {
+    private Client client;
+    private String playerName;
 
     /**
      * Creates new form StartScreen
      */
     public StartScreen() {
+        this(null);
+    }
+
+    public StartScreen(String playerName) {
+        this.playerName = playerName;
         initComponents();
+        setLocationRelativeTo(null);
+        if (this.playerName == null || this.playerName.trim().isEmpty()) {
+            askPlayerName();
+        } else {
+            buttonHostGame.setEnabled(true);
+            buttonJoinGame.setEnabled(true);
+            client = new Client(this.playerName.trim());
+        }
+    }
+
+    private void askPlayerName() {
+        buttonHostGame.setEnabled(false);
+        buttonJoinGame.setEnabled(false);
+        while (playerName == null || playerName.trim().isEmpty()) {
+            playerName = JOptionPane.showInputDialog(this, "Lütfen bir oyuncu adı girin:", "Oyuncu Adı", JOptionPane.PLAIN_MESSAGE);
+            if (playerName == null) {
+                // Kullanıcı iptal ederse uygulamadan çık
+                System.exit(0);
+            }
+            if (playerName.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Oyuncu adı boş olamaz!", "Hata", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        buttonHostGame.setEnabled(true);
+        buttonJoinGame.setEnabled(true);
+        client = new Client(playerName.trim());
     }
 
     /**
@@ -29,45 +64,88 @@ public class StartScreen extends javax.swing.JFrame {
         buttonHostGame = new javax.swing.JButton();
         buttonJoinGame = new javax.swing.JButton();
         buttonExitGame = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         buttonHostGame.setText("Host Game");
+        buttonHostGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonHostGameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonHostGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, 163, 35));
 
         buttonJoinGame.setText("Join Game");
+        buttonJoinGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonJoinGameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonJoinGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 164, 35));
 
         buttonExitGame.setText("Exit Game");
+        buttonExitGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonExitGameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonExitGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 230, 163, 35));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(buttonHostGame, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(buttonJoinGame, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(142, 142, 142)
-                        .addComponent(buttonExitGame, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(155, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonJoinGame, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonHostGame, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonExitGame, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
-        );
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/Riskgame_logosmall.png"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, -1, -1));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/riskBG.jpg"))); // NOI18N
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 300));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonHostGameActionPerformed(java.awt.event.ActionEvent evt) {
+        if (client.connect()) {
+            if (client.createLobby()) {
+                GameLobbyHost lobbyHost = new GameLobbyHost(client);
+                lobbyHost.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                    "A game lobby already exists!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Could not connect to server!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void buttonJoinGameActionPerformed(java.awt.event.ActionEvent evt) {
+        if (client.connect()) {
+            if (client.joinLobby()) {
+                GameLobbyPlayer lobbyPlayer = new GameLobbyPlayer(client);
+                lobbyPlayer.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                    "No game lobby available!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Could not connect to server!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void buttonExitGameActionPerformed(java.awt.event.ActionEvent evt) {
+        System.exit(0);
+    }
 
     /**
      * @param args the command line arguments
@@ -80,7 +158,7 @@ public class StartScreen extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -108,5 +186,7 @@ public class StartScreen extends javax.swing.JFrame {
     private javax.swing.JButton buttonExitGame;
     private javax.swing.JButton buttonHostGame;
     private javax.swing.JButton buttonJoinGame;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
