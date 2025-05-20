@@ -12,6 +12,9 @@
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/GameState.java
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/Logger.java
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/Player.java
+/Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/PlayerStats.java
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/Server.java
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/StartScreen.java
 /Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/Territory.java
+/Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/TerritoryDistributor.java
+/Users/ifozmen/NetBeansProjects/RiskGame/src/main/java/com/izzettinozmen/riskgame/TerritoryManager.java

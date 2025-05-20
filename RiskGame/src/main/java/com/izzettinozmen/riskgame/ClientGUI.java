@@ -11,8 +11,30 @@ package com.izzettinozmen.riskgame;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+import javax.swing.BorderFactory;
+import javax.swing.UIManager;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
+import java.awt.Font;
 
 public class ClientGUI extends javax.swing.JFrame {
+
+    private Client client;
+    private Map<String, JButton> territoryButtons;
+    private Territory selectedTerritory;
+    private Territory targetTerritory;
+    private Player thisPlayer;
 
     /**
      * Creates new form ClientGUI
@@ -20,6 +42,8 @@ public class ClientGUI extends javax.swing.JFrame {
     public ClientGUI() {
         initComponents();
         setLocationRelativeTo(null);
+        initializeTerritoryButtons();
+        initialize();
     }
 
     /**
@@ -31,7 +55,7 @@ public class ClientGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        panelMap = new javax.swing.JPanel();
         buttonAfghanistan = new javax.swing.JButton();
         buttonIrkutsk = new javax.swing.JButton();
         buttonYakutsk = new javax.swing.JButton();
@@ -79,148 +103,143 @@ public class ClientGUI extends javax.swing.JFrame {
         buttonIceland = new javax.swing.JButton();
         buttonEasternAustralia1 = new javax.swing.JButton();
         labelMapImage = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scrollpaneWarLogs = new javax.swing.JScrollPane();
         textareaWarLogs = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
+        labelWarLogs = new javax.swing.JLabel();
         buttonFinishTurn = new javax.swing.JButton();
         buttonSurrender = new javax.swing.JButton();
-        jPanel5 = new javax.swing.JPanel();
+        panelCurrentTurnsPlayerStats = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         labelCurrentPlayingPlayerUI = new javax.swing.JLabel();
         labelCurrentPlayerSoldierNumberUI = new javax.swing.JLabel();
         labelCurrentPlayerTerritoryNumberUI = new javax.swing.JLabel();
-        PlayerName = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        labelThisPlayerName = new javax.swing.JLabel();
+        riskLogo = new javax.swing.JLabel();
+        labelGameStateHeader = new javax.swing.JLabel();
+        panelThisPlayerStats = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        labelPlayerSoldierNumberUI = new javax.swing.JLabel();
-        labelPlayerTerritoryNumberUI = new javax.swing.JLabel();
-        labelPlayerEarnedSoldierPerTurnUI = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        buttonLeaveGame1 = new javax.swing.JButton();
+        labelThisPlayerSoldierNumberUI = new javax.swing.JLabel();
+        labelThisPlayerTerritoryNumberUI = new javax.swing.JLabel();
+        labelThisPlayerEarnedSoldierPerTurnUI = new javax.swing.JLabel();
+        labelCurrentGamePhase = new javax.swing.JLabel();
+        buttonLeaveGame = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelMap.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelMap.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         buttonAfghanistan.setText("0");
-        jPanel1.add(buttonAfghanistan, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 260, -1, -1));
+        panelMap.add(buttonAfghanistan, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 260, -1, -1));
 
         buttonIrkutsk.setText("0");
-        jPanel1.add(buttonIrkutsk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 190, -1, -1));
+        panelMap.add(buttonIrkutsk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 190, -1, -1));
 
         buttonYakutsk.setText("0");
-        jPanel1.add(buttonYakutsk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 130, -1, -1));
+        panelMap.add(buttonYakutsk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 130, -1, -1));
 
         buttonJapan.setText("0");
-        jPanel1.add(buttonJapan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 270, -1, -1));
+        panelMap.add(buttonJapan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 270, -1, -1));
 
         buttonKamchatka1.setText("0");
-        jPanel1.add(buttonKamchatka1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1160, 130, -1, -1));
+        panelMap.add(buttonKamchatka1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1160, 130, -1, -1));
 
         buttonChina.setText("0");
-        jPanel1.add(buttonChina, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 310, -1, -1));
+        panelMap.add(buttonChina, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 310, -1, -1));
 
         buttonSiberia.setText("0");
-        jPanel1.add(buttonSiberia, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 160, -1, -1));
+        panelMap.add(buttonSiberia, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 160, -1, -1));
 
         buttonIndia.setText("0");
-        jPanel1.add(buttonIndia, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 380, -1, -1));
+        panelMap.add(buttonIndia, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 380, -1, -1));
 
         buttonMiddleEast.setText("0");
-        jPanel1.add(buttonMiddleEast, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 340, -1, -1));
+        panelMap.add(buttonMiddleEast, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 340, -1, -1));
 
         buttonUkranie.setText("0");
-        jPanel1.add(buttonUkranie, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 180, -1, -1));
+        panelMap.add(buttonUkranie, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 180, -1, -1));
 
         buttonSouthernEurope.setText("0");
-        jPanel1.add(buttonSouthernEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 280, -1, -1));
+        panelMap.add(buttonSouthernEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 280, -1, -1));
 
         buttonUral.setText("0");
-        jPanel1.add(buttonUral, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 180, -1, -1));
+        panelMap.add(buttonUral, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 180, -1, -1));
 
         buttonGreatBritain.setText("0");
-        jPanel1.add(buttonGreatBritain, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 210, -1, -1));
+        panelMap.add(buttonGreatBritain, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 210, -1, -1));
 
         buttonEgypt.setText("0");
-        jPanel1.add(buttonEgypt, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 380, -1, -1));
+        panelMap.add(buttonEgypt, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 380, -1, -1));
 
         buttonWesternEurope.setText("0");
-        jPanel1.add(buttonWesternEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 290, -1, -1));
+        panelMap.add(buttonWesternEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 290, -1, -1));
 
         buttonNorthAfrica.setText("0");
-        jPanel1.add(buttonNorthAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 410, -1, -1));
+        panelMap.add(buttonNorthAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 410, -1, -1));
 
         buttonCongo.setText("0");
-        jPanel1.add(buttonCongo, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 500, -1, -1));
+        panelMap.add(buttonCongo, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 500, -1, -1));
 
         buttonNorthernEurope.setText("0");
-        jPanel1.add(buttonNorthernEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 230, -1, -1));
+        panelMap.add(buttonNorthernEurope, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 230, -1, -1));
 
         buttonSouthAfrica.setText("0");
-        jPanel1.add(buttonSouthAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 600, -1, -1));
+        panelMap.add(buttonSouthAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 600, -1, -1));
 
         buttonWesternAustralia.setText("0");
-        jPanel1.add(buttonWesternAustralia, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 580, -1, -1));
+        panelMap.add(buttonWesternAustralia, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 580, -1, -1));
 
         buttonLatifland.setText("0");
-        jPanel1.add(buttonLatifland, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 600, -1, -1));
+        panelMap.add(buttonLatifland, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 600, -1, -1));
 
         buttonSametistan.setText("0");
-        jPanel1.add(buttonSametistan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 390, -1, -1));
+        panelMap.add(buttonSametistan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 390, -1, -1));
 
         buttonEastAfrica.setText("0");
-        jPanel1.add(buttonEastAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 460, -1, -1));
+        panelMap.add(buttonEastAfrica, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 460, -1, -1));
 
         buttonIndonesia.setText("0");
-        jPanel1.add(buttonIndonesia, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 470, -1, -1));
+        panelMap.add(buttonIndonesia, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 470, -1, -1));
 
         buttonNewGuinea.setText("0");
-        jPanel1.add(buttonNewGuinea, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 490, -1, -1));
+        panelMap.add(buttonNewGuinea, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 490, -1, -1));
 
         buttonPeru.setText("0");
-        buttonPeru.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPeruActionPerformed(evt);
-            }
-        });
-        jPanel1.add(buttonPeru, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 510, -1, -1));
+        panelMap.add(buttonPeru, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 510, -1, -1));
 
         buttonSlam.setText("0");
-        jPanel1.add(buttonSlam, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 390, -1, -1));
+        panelMap.add(buttonSlam, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 390, -1, -1));
 
         buttonArgentina.setText("0");
-        jPanel1.add(buttonArgentina, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 590, -1, -1));
+        panelMap.add(buttonArgentina, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 590, -1, -1));
 
         buttonVenezuela.setText("0");
-        jPanel1.add(buttonVenezuela, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 410, -1, -1));
+        panelMap.add(buttonVenezuela, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 410, -1, -1));
 
         buttonEasternUnitedStates.setText("0");
-        jPanel1.add(buttonEasternUnitedStates, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, -1, -1));
+        panelMap.add(buttonEasternUnitedStates, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, -1, -1));
 
         buttonCentralAmerica.setText("0");
-        jPanel1.add(buttonCentralAmerica, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 330, -1, -1));
+        panelMap.add(buttonCentralAmerica, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 330, -1, -1));
 
         buttonAlberta.setText("0");
-        jPanel1.add(buttonAlberta, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 190, -1, -1));
+        panelMap.add(buttonAlberta, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 190, -1, -1));
 
         buttonBrazil.setText("0");
-        jPanel1.add(buttonBrazil, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 480, -1, -1));
+        panelMap.add(buttonBrazil, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 480, -1, -1));
 
         buttonOntario.setText("0");
-        jPanel1.add(buttonOntario, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, -1));
+        panelMap.add(buttonOntario, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, -1));
 
         buttonQuebec.setText("0");
-        jPanel1.add(buttonQuebec, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, -1, -1));
+        panelMap.add(buttonQuebec, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, -1, -1));
 
         buttonNorthWestTerritory.setText("0");
-        jPanel1.add(buttonNorthWestTerritory, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 130, -1, -1));
+        panelMap.add(buttonNorthWestTerritory, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 130, -1, -1));
 
         buttonAratopia.setText("0");
         buttonAratopia.addActionListener(new java.awt.event.ActionListener() {
@@ -228,22 +247,22 @@ public class ClientGUI extends javax.swing.JFrame {
                 buttonAratopiaActionPerformed(evt);
             }
         });
-        jPanel1.add(buttonAratopia, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
+        panelMap.add(buttonAratopia, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
 
         buttonAlaska.setText("0");
-        jPanel1.add(buttonAlaska, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
+        panelMap.add(buttonAlaska, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
 
         buttonGreenland.setText("0");
-        jPanel1.add(buttonGreenland, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 70, -1, -1));
+        panelMap.add(buttonGreenland, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 70, -1, -1));
 
         buttonCihanland.setText("0");
-        jPanel1.add(buttonCihanland, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 30, -1, -1));
+        panelMap.add(buttonCihanland, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 30, -1, -1));
 
         buttonIzzettinia.setText("0");
-        jPanel1.add(buttonIzzettinia, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, -1, -1));
+        panelMap.add(buttonIzzettinia, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, -1, -1));
 
         buttonWesternUnitedStates.setText("0");
-        jPanel1.add(buttonWesternUnitedStates, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 250, -1, -1));
+        panelMap.add(buttonWesternUnitedStates, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 250, -1, -1));
 
         buttonMongolia.setText("0");
         buttonMongolia.addActionListener(new java.awt.event.ActionListener() {
@@ -251,26 +270,26 @@ public class ClientGUI extends javax.swing.JFrame {
                 buttonMongoliaActionPerformed(evt);
             }
         });
-        jPanel1.add(buttonMongolia, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
+        panelMap.add(buttonMongolia, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
 
         buttonScandinavia.setText("0");
-        jPanel1.add(buttonScandinavia, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, -1, -1));
+        panelMap.add(buttonScandinavia, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, -1, -1));
 
         buttonIceland.setText("0");
-        jPanel1.add(buttonIceland, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
+        panelMap.add(buttonIceland, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
 
         buttonEasternAustralia1.setText("0");
-        jPanel1.add(buttonEasternAustralia1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 580, -1, -1));
+        panelMap.add(buttonEasternAustralia1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 580, -1, -1));
 
         labelMapImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/riskMap_small.jpg"))); // NOI18N
-        jPanel1.add(labelMapImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1290, 730));
+        panelMap.add(labelMapImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1290, 730));
 
         textareaWarLogs.setColumns(20);
         textareaWarLogs.setRows(5);
-        jScrollPane1.setViewportView(textareaWarLogs);
+        scrollpaneWarLogs.setViewportView(textareaWarLogs);
 
-        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
-        jLabel2.setText("War Logs");
+        labelWarLogs.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
+        labelWarLogs.setText("War Logs");
 
         buttonFinishTurn.setText("Finish Turn");
         buttonFinishTurn.addActionListener(new java.awt.event.ActionListener() {
@@ -286,7 +305,7 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelCurrentTurnsPlayerStats.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel6.setText("Player Turn:");
 
@@ -300,54 +319,54 @@ public class ClientGUI extends javax.swing.JFrame {
 
         labelCurrentPlayerTerritoryNumberUI.setText("Player");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelCurrentTurnsPlayerStatsLayout = new javax.swing.GroupLayout(panelCurrentTurnsPlayerStats);
+        panelCurrentTurnsPlayerStats.setLayout(panelCurrentTurnsPlayerStatsLayout);
+        panelCurrentTurnsPlayerStatsLayout.setHorizontalGroup(
+            panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCurrentTurnsPlayerStatsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelCurrentTurnsPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelCurrentPlayingPlayerUI))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGroup(panelCurrentTurnsPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelCurrentPlayerSoldierNumberUI))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGroup(panelCurrentTurnsPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelCurrentPlayerTerritoryNumberUI)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        panelCurrentTurnsPlayerStatsLayout.setVerticalGroup(
+            panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCurrentTurnsPlayerStatsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(labelCurrentPlayingPlayerUI))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(labelCurrentPlayerSoldierNumberUI))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelCurrentTurnsPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(labelCurrentPlayerTerritoryNumberUI))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
-        PlayerName.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
-        PlayerName.setText("Player");
+        labelThisPlayerName.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
+        labelThisPlayerName.setText("Player");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/Riskgame_logosmall.png"))); // NOI18N
+        riskLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/izzettinozmen/riskgame/resources/Riskgame_logosmall.png"))); // NOI18N
 
-        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
-        jLabel12.setText("Game State:");
+        labelGameStateHeader.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
+        labelGameStateHeader.setText("Game State:");
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panelThisPlayerStats.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel14.setText("Your Soldiers:");
 
@@ -355,57 +374,57 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jLabel16.setText("Soldier Per Turn:");
 
-        labelPlayerSoldierNumberUI.setText("0");
+        labelThisPlayerSoldierNumberUI.setText("0");
 
-        labelPlayerTerritoryNumberUI.setText("0");
+        labelThisPlayerTerritoryNumberUI.setText("0");
 
-        labelPlayerEarnedSoldierPerTurnUI.setText("0");
+        labelThisPlayerEarnedSoldierPerTurnUI.setText("0");
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelThisPlayerStatsLayout = new javax.swing.GroupLayout(panelThisPlayerStats);
+        panelThisPlayerStats.setLayout(panelThisPlayerStatsLayout);
+        panelThisPlayerStatsLayout.setHorizontalGroup(
+            panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelThisPlayerStatsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelThisPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelPlayerSoldierNumberUI))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(labelThisPlayerSoldierNumberUI))
+                    .addGroup(panelThisPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelPlayerTerritoryNumberUI))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(labelThisPlayerTerritoryNumberUI))
+                    .addGroup(panelThisPlayerStatsLayout.createSequentialGroup()
                         .addComponent(jLabel16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelPlayerEarnedSoldierPerTurnUI)))
+                        .addComponent(labelThisPlayerEarnedSoldierPerTurnUI)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        panelThisPlayerStatsLayout.setVerticalGroup(
+            panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelThisPlayerStatsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
-                    .addComponent(labelPlayerSoldierNumberUI))
+                    .addComponent(labelThisPlayerSoldierNumberUI))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15)
-                    .addComponent(labelPlayerTerritoryNumberUI))
+                    .addComponent(labelThisPlayerTerritoryNumberUI))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelThisPlayerStatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(labelPlayerEarnedSoldierPerTurnUI))
+                    .addComponent(labelThisPlayerEarnedSoldierPerTurnUI))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        jLabel13.setText("STANDBY");
+        labelCurrentGamePhase.setText("STANDBY");
 
-        buttonLeaveGame1.setText("Leave");
-        buttonLeaveGame1.addActionListener(new java.awt.event.ActionListener() {
+        buttonLeaveGame.setText("Leave");
+        buttonLeaveGame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonLeaveGame1ActionPerformed(evt);
+                buttonLeaveGameActionPerformed(evt);
             }
         });
 
@@ -415,7 +434,7 @@ public class ClientGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelMap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -423,21 +442,21 @@ public class ClientGUI extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(buttonSurrender)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonLeaveGame1))
+                        .addComponent(buttonLeaveGame))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(scrollpaneWarLogs, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(PlayerName)
+                                .addComponent(labelWarLogs)
+                                .addComponent(labelThisPlayerName)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel12)
+                                    .addComponent(labelGameStateHeader)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(labelCurrentGamePhase, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(panelCurrentTurnsPlayerStats, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(panelThisPlayerStats, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(riskLogo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(0, 5, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -447,58 +466,82 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(riskLogo)
                         .addGap(18, 18, 18)
-                        .addComponent(PlayerName)
+                        .addComponent(labelThisPlayerName)
                         .addGap(5, 5, 5)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelThisPlayerStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel13))
+                            .addComponent(labelGameStateHeader)
+                            .addComponent(labelCurrentGamePhase))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelCurrentTurnsPlayerStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
+                        .addComponent(labelWarLogs)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scrollpaneWarLogs, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(buttonFinishTurn)
                             .addComponent(buttonSurrender)
-                            .addComponent(buttonLeaveGame1))
+                            .addComponent(buttonLeaveGame))
                         .addGap(29, 29, 29))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelMap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buttonFinishTurnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFinishTurnActionPerformed
+        nextPhase();
+    }//GEN-LAST:event_buttonFinishTurnActionPerformed
+
+    private void buttonSurrenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSurrenderActionPerformed
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.PLAYER_LEFT,
+                    null
+                ));
+                
+                // Close the game window
+                this.dispose();
+            } catch (Exception e) {
+                addLogMessage("Error surrendering: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_buttonSurrenderActionPerformed
+
+    private void buttonLeaveGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLeaveGameActionPerformed
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.PLAYER_LEFT,
+                    null
+                ));
+                
+                // Close the game window
+                this.dispose();
+            } catch (Exception e) {
+                addLogMessage("Error leaving game: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_buttonLeaveGameActionPerformed
+
     private void buttonPeruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPeruActionPerformed
-        // TODO add your handling code here:
+        handleTerritoryButtonClick(buttonPeru, "Peru");
     }//GEN-LAST:event_buttonPeruActionPerformed
 
     private void buttonMongoliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMongoliaActionPerformed
-        // TODO add your handling code here:
+        handleTerritoryButtonClick(buttonMongolia, "Mongolia");
     }//GEN-LAST:event_buttonMongoliaActionPerformed
 
     private void buttonAratopiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAratopiaActionPerformed
-        // TODO add your handling code here:
+        handleTerritoryButtonClick(buttonAratopia, "Aratopia");
     }//GEN-LAST:event_buttonAratopiaActionPerformed
-
-    private void buttonSurrenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSurrenderActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_buttonSurrenderActionPerformed
-
-    private void buttonLeaveGame1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLeaveGame1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_buttonLeaveGame1ActionPerformed
-
-    private void buttonFinishTurnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFinishTurnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_buttonFinishTurnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -511,7 +554,7 @@ public class ClientGUI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("MacOS".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -536,7 +579,6 @@ public class ClientGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel PlayerName;
     private javax.swing.JButton buttonAfghanistan;
     private javax.swing.JButton buttonAlaska;
     private javax.swing.JButton buttonAlberta;
@@ -562,7 +604,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonJapan;
     private javax.swing.JButton buttonKamchatka1;
     private javax.swing.JButton buttonLatifland;
-    private javax.swing.JButton buttonLeaveGame1;
+    private javax.swing.JButton buttonLeaveGame;
     private javax.swing.JButton buttonMiddleEast;
     private javax.swing.JButton buttonMongolia;
     private javax.swing.JButton buttonNewGuinea;
@@ -586,27 +628,877 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton buttonWesternEurope;
     private javax.swing.JButton buttonWesternUnitedStates;
     private javax.swing.JButton buttonYakutsk;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelCurrentGamePhase;
     private javax.swing.JLabel labelCurrentPlayerSoldierNumberUI;
     private javax.swing.JLabel labelCurrentPlayerTerritoryNumberUI;
     private javax.swing.JLabel labelCurrentPlayingPlayerUI;
+    private javax.swing.JLabel labelGameStateHeader;
     private javax.swing.JLabel labelMapImage;
-    private javax.swing.JLabel labelPlayerEarnedSoldierPerTurnUI;
-    private javax.swing.JLabel labelPlayerSoldierNumberUI;
-    private javax.swing.JLabel labelPlayerTerritoryNumberUI;
+    private javax.swing.JLabel labelThisPlayerEarnedSoldierPerTurnUI;
+    private javax.swing.JLabel labelThisPlayerName;
+    private javax.swing.JLabel labelThisPlayerSoldierNumberUI;
+    private javax.swing.JLabel labelThisPlayerTerritoryNumberUI;
+    private javax.swing.JLabel labelWarLogs;
+    private javax.swing.JPanel panelCurrentTurnsPlayerStats;
+    private javax.swing.JPanel panelMap;
+    private javax.swing.JPanel panelThisPlayerStats;
+    private javax.swing.JLabel riskLogo;
+    private javax.swing.JScrollPane scrollpaneWarLogs;
     private javax.swing.JTextArea textareaWarLogs;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Sets the client for this GUI
+     * @param client The client instance
+     */
+    public void setClient(Client client) {
+        this.client = client;
+        client.setGUI(this);
+    }
+    
+    /**
+     * Sets the current player
+     * @param player The player instance
+     */
+    public void setThisPlayer(Player player) {
+        this.thisPlayer = player;
+        updateThisPlayerInfo();
+    }
+    
+    /**
+     * Initializes the territory buttons map
+     */
+    private void initializeTerritoryButtons() {
+        territoryButtons = new HashMap<>();
+        
+        // Add all territory buttons to the map
+        // NOT: Button isimleri ile territory isimleri aynı olmalı
+        territoryButtons.put("Afghanistan", buttonAfghanistan);
+        territoryButtons.put("Alaska", buttonAlaska);
+        territoryButtons.put("Alberta", buttonAlberta);
+        territoryButtons.put("Aratopia", buttonAratopia);
+        territoryButtons.put("Argentina", buttonArgentina);
+        territoryButtons.put("Brazil", buttonBrazil);
+        territoryButtons.put("CentralAmerica", buttonCentralAmerica);
+        territoryButtons.put("China", buttonChina);
+        territoryButtons.put("Cihanland", buttonCihanland);
+        territoryButtons.put("Congo", buttonCongo);
+        territoryButtons.put("EastAfrica", buttonEastAfrica);
+        territoryButtons.put("EasternAustralia", buttonEasternAustralia1);
+        territoryButtons.put("EasternUnitedStates", buttonEasternUnitedStates);
+        territoryButtons.put("Egypt", buttonEgypt);
+        territoryButtons.put("GreatBritain", buttonGreatBritain);
+        territoryButtons.put("Greenland", buttonGreenland);
+        territoryButtons.put("Iceland", buttonIceland);
+        territoryButtons.put("India", buttonIndia);
+        territoryButtons.put("Indonesia", buttonIndonesia);
+        territoryButtons.put("Irkutsk", buttonIrkutsk);
+        territoryButtons.put("Izzettinia", buttonIzzettinia);
+        territoryButtons.put("Japan", buttonJapan);
+        territoryButtons.put("Kamchatka", buttonKamchatka1);
+        territoryButtons.put("Latifland", buttonLatifland);
+        territoryButtons.put("MiddleEast", buttonMiddleEast);
+        territoryButtons.put("Mongolia", buttonMongolia);
+        territoryButtons.put("NewGuinea", buttonNewGuinea);
+        territoryButtons.put("NorthAfrica", buttonNorthAfrica);
+        territoryButtons.put("NorthWestTerritory", buttonNorthWestTerritory);
+        territoryButtons.put("NorthernEurope", buttonNorthernEurope);
+        territoryButtons.put("Ontario", buttonOntario);
+        territoryButtons.put("Peru", buttonPeru);
+        territoryButtons.put("Quebec", buttonQuebec);
+        territoryButtons.put("Sametistan", buttonSametistan);
+        territoryButtons.put("Scandinavia", buttonScandinavia);
+        territoryButtons.put("Siberia", buttonSiberia);
+        territoryButtons.put("Slam", buttonSlam);
+        territoryButtons.put("SouthAfrica", buttonSouthAfrica);
+        territoryButtons.put("SouthernEurope", buttonSouthernEurope);
+        territoryButtons.put("Ukranie", buttonUkranie); // Dikkat: Ukranie olarak yazılmış, Ukraine değil
+        territoryButtons.put("Ural", buttonUral);
+        territoryButtons.put("Venezuela", buttonVenezuela);
+        territoryButtons.put("WesternAustralia", buttonWesternAustralia);
+        territoryButtons.put("WesternEurope", buttonWesternEurope);
+        territoryButtons.put("WesternUnitedStates", buttonWesternUnitedStates);
+        territoryButtons.put("Yakutsk", buttonYakutsk);
+        
+        // Debug için tüm butonları konsola yazdır
+        addLogMessage("DEBUG: Initialized " + territoryButtons.size() + " territory buttons");
+        addLogMessage("DEBUG: Button names:");
+        for (String key : territoryButtons.keySet()) {
+            addLogMessage("DEBUG: " + key);
+        }
+    }
+    
+    /**
+     * Updates the game state UI
+     * @param gameState The current game state
+     */
+    public void updateGameState(GameState gameState) {
+        SwingUtilities.invokeLater(() -> {
+            addLogMessage("DEBUG: ----- Game State Update -----");
+            addLogMessage("DEBUG: Game Phase: " + gameState.getCurrentPhase());
+            addLogMessage("DEBUG: Player Count: " + gameState.getPlayers().size());
+            
+            // Debug: Oyuncu bilgilerini yazdır
+            for (Player p : gameState.getPlayers()) {
+                addLogMessage("DEBUG: Player: " + p.getName() + 
+                             " - Color: RGB(" + p.getColor().getRed() + "," + 
+                             p.getColor().getGreen() + "," + 
+                             p.getColor().getBlue() + ")" +
+                             " - Territory Count: " + p.getTerritoryCount());
+            }
+            
+            // Debug: Bölge sayısını kontrol et
+            addLogMessage("DEBUG: Territory Count: " + gameState.getTerritories().size());
+            
+            // Uyarı mesajı ekleyelim
+            if (gameState.getTerritories() == null || gameState.getTerritories().isEmpty()) {
+                addLogMessage("ERROR: Game state contains no territories!");
+                return;
+            }
+
+            // Bölge-oyuncu eşleşmesi kontrolü
+            int ownedTerritories = 0;
+            for (Territory t : gameState.getTerritories()) {
+                if (t.getOwner() != null) {
+                    ownedTerritories++;
+                }
+            }
+            addLogMessage("DEBUG: Territories with owners: " + ownedTerritories + "/" + gameState.getTerritories().size());
+            
+            // Client objesini kontrol et
+            if (client == null) {
+                addLogMessage("ERROR: Client object is null!");
+                return;
+            }
+            
+            // Son güncellenmiş bilgilerle UI'ı güncelle
+            updateTerritoryOwnership(gameState);
+            updateCurrentPlayerStats(gameState.getCurrentPlayer());
+            updateGamePhase(gameState.getCurrentPhase());
+            
+            // Update this player's stats if available
+            if (thisPlayer != null) {
+                for (Player player : gameState.getPlayers()) {
+                    if (player.getName().equals(thisPlayer.getName())) {
+                        thisPlayer = player;
+                        updateThisPlayerInfo();
+                        break;
+                    }
+                }
+            }
+            
+            // Check for game over
+            if (gameState.isGameOver()) {
+                Player winner = gameState.getWinner();
+                if (winner != null) {
+                    showGameOverMessage(winner.getName() + " has won the game!");
+                }
+            }
+            
+            // Add log message
+            addLogMessage("Game state updated");
+            addLogMessage("DEBUG: ----- End of Update -----");
+        });
+    }
+    
+    /**
+     * Updates the territory ownership UI
+     * @param gameState The current game state
+     */
+    private void updateTerritoryOwnership(GameState gameState) {
+        addLogMessage("DEBUG: Updating territory ownership with " + gameState.getTerritories().size() + " territories");
+        
+        for (Territory territory : gameState.getTerritories()) {
+            JButton button = territoryButtons.get(territory.getName());
+            if (button != null) {
+                Player owner = territory.getOwner();
+                if (owner != null) {
+                    // Log for debugging
+                    addLogMessage("DEBUG: Territory " + territory.getName() + " owned by " + owner.getName() + 
+                                  " with color RGB(" + owner.getColor().getRed() + "," + 
+                                  owner.getColor().getGreen() + "," + owner.getColor().getBlue() + ")");
+                    
+                    // Butonu oyuncunun rengine göre stillendir
+                    styleButton(button, owner.getColor());
+                    
+                    // Asker sayısını güncelle
+                    button.setText(String.valueOf(territory.getSoldierCount()));
+                } else {
+                    // Log for debugging
+                    addLogMessage("DEBUG: Territory " + territory.getName() + " has no owner");
+                    
+                    // Sahibi olmayan bölgeleri için nötr renk ile yuvarlak buton yap
+                    Color neutralColor = new Color(200, 200, 200); // Gri renk
+                    styleButton(button, neutralColor);
+                    button.setText("0");
+                }
+            } else {
+                addLogMessage("ERROR: Button not found for territory " + territory.getName());
+            }
+        }
+        addLogMessage("DEBUG: Territory ownership update completed");
+    }
+    
+    /**
+     * Territories butonlarını oyuncu renklerine göre stillendirir
+     * @param button Renklendirilen buton
+     * @param playerColor Oyuncu rengi
+     */
+    private void styleButton(JButton button, Color playerColor) {
+        // Look and Feel'i override et ve tüm UI özelliklerini sıfırla
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
+        button.setFocusPainted(false);
+        button.setBorderPainted(true);
+        
+        // Butonun boyutunu biraz arttır (daha belirgin olması için)
+        button.setPreferredSize(new java.awt.Dimension(40, 40));
+        button.setSize(40, 40);
+        button.setMinimumSize(new java.awt.Dimension(40, 40));
+        
+        // Arka plan rengini ayarla
+        button.setBackground(playerColor);
+        
+        // Buton tipini yuvarlak olarak değiştir (square yerine)
+        button.putClientProperty("JButton.buttonType", "round");
+        
+        // MacOS için özel ayarlar
+        button.putClientProperty("JComponent.sizeVariant", "small");
+        
+        // Aqua Look and Feel'i devre dışı bırak
+        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            protected void installDefaults(AbstractButton b) {
+                super.installDefaults(b);
+                b.setOpaque(true);
+                b.setBorder(new EmptyBorder(5, 5, 5, 5));
+            }
+            
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                AbstractButton b = (AbstractButton) c;
+                ButtonModel model = b.getModel();
+                
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Yuvarlak arka plan çiz (daha büyük bir dolgu ile)
+                g2.setColor(b.getBackground());
+                g2.fillOval(0, 0, b.getWidth() - 1, b.getHeight() - 1);
+                
+                // Daha belirgin kenar çizgisi ekle
+                g2.setColor(new Color(0, 0, 0, 100));
+                g2.setStroke(new java.awt.BasicStroke(2)); // Çizgi kalınlığını arttır
+                g2.drawOval(0, 0, b.getWidth() - 1, b.getHeight() - 1);
+                
+                // Metni biraz daha büyük font ile çizdir
+                Font defaultFont = b.getFont();
+                Font boldFont = defaultFont.deriveFont(Font.BOLD, 14); // Daha büyük ve kalın font
+                g2.setFont(boldFont);
+                
+                FontMetrics fm = g2.getFontMetrics();
+                Rectangle textRect = new Rectangle(0, 0, b.getWidth(), b.getHeight());
+                String text = b.getText();
+                
+                g2.setColor(b.getForeground());
+                g2.drawString(text, 
+                        (textRect.width - fm.stringWidth(text)) / 2, 
+                        (textRect.height + fm.getAscent() - fm.getDescent()) / 2);
+                
+                g2.dispose();
+            }
+        });
+        
+        // Arka plan rengine göre metin rengini ayarla
+        button.setForeground(getContrastColor(playerColor));
+        
+        // Zorla tekrar çiz
+        button.revalidate();
+        button.repaint();
+    }
+    
+    /**
+     * Gets a contrasting color for text based on background color
+     * @param color The background color
+     * @return Black or white text color
+     */
+    private Color getContrastColor(Color backgroundColor) {
+        // Calculate perceived brightness (Y) based on RGB
+        // Using formula: Y = 0.299R + 0.587G + 0.114B
+        double brightness = 0.299 * backgroundColor.getRed() + 
+                           0.587 * backgroundColor.getGreen() + 
+                           0.114 * backgroundColor.getBlue();
+        
+        // Use white text for dark backgrounds, black text for light backgrounds
+        return (brightness < 128) ? Color.WHITE : Color.BLACK;
+    }
+    
+    /**
+     * Updates the current player's stats UI
+     * @param currentPlayer The current player
+     */
+    private void updateCurrentPlayerStats(Player currentPlayer) {
+        if (currentPlayer != null) {
+            labelCurrentPlayingPlayerUI.setText(currentPlayer.getName());
+            labelCurrentPlayingPlayerUI.setForeground(currentPlayer.getColor());
+            labelCurrentPlayerSoldierNumberUI.setText(String.valueOf(currentPlayer.getTotalSoldiers()));
+            labelCurrentPlayerTerritoryNumberUI.setText(String.valueOf(currentPlayer.getTerritoryCount()));
+        }
+    }
+    
+    /**
+     * Updates this player's info UI
+     */
+    private void updateThisPlayerInfo() {
+        if (thisPlayer != null) {
+            labelThisPlayerName.setText(thisPlayer.getName());
+            labelThisPlayerName.setForeground(thisPlayer.getColor());
+            labelThisPlayerSoldierNumberUI.setText(String.valueOf(thisPlayer.getTotalSoldiers()));
+            labelThisPlayerTerritoryNumberUI.setText(String.valueOf(thisPlayer.getTerritoryCount()));
+            labelThisPlayerEarnedSoldierPerTurnUI.setText(String.valueOf(thisPlayer.getSoldiersPerTurn()));
+        }
+    }
+    
+    /**
+     * Updates the game phase UI
+     * @param phase The current game phase
+     */
+    public void updateGamePhase(GameState.GamePhase phase) {
+        labelCurrentGamePhase.setText(phase.toString());
+    }
+    
+    /**
+     * Adds a message to the war logs
+     * @param message The message to add
+     */
+    public void addLogMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            textareaWarLogs.append(message + "\n");
+            textareaWarLogs.setCaretPosition(textareaWarLogs.getDocument().getLength());
+        });
+    }
+    
+    /**
+     * Highlights a territory
+     * @param territoryName The territory name
+     * @param isSelected Whether the territory is selected
+     */
+    public void highlightTerritory(String territoryName, boolean isSelected) {
+        JButton button = territoryButtons.get(territoryName);
+        if (button != null) {
+            if (isSelected) {
+                button.setBorder(javax.swing.BorderFactory.createLineBorder(Color.YELLOW, 3));
+            } else {
+                button.setBorder(null);
+            }
+        }
+    }
+    
+    /**
+     * Sends a territory selection to the server
+     * @param territoryName The territory name
+     */
+    private void selectTerritory(String territoryName) {
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.TERRITORY_SELECTED,
+                    territoryName
+                ));
+            } catch (Exception e) {
+                addLogMessage("Error sending territory selection: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Handles territory button clicks based on the current game phase
+     * @param button The clicked button
+     * @param territoryName The name of the territory
+     */
+    private void handleTerritoryButtonClick(JButton button, String territoryName) {
+        if (client == null) {
+            return;
+        }
+        
+        try {
+            GameState.GamePhase currentPhase = labelCurrentGamePhase.getText().equals("SETUP") ? 
+                GameState.GamePhase.SETUP : 
+                (labelCurrentGamePhase.getText().equals("REINFORCEMENT") ? 
+                    GameState.GamePhase.REINFORCEMENT : 
+                    (labelCurrentGamePhase.getText().equals("ATTACK") ? 
+                        GameState.GamePhase.ATTACK : 
+                        GameState.GamePhase.FORTIFICATION));
+            
+            // Bölgenin sahibini bul (eğer varsa)
+            Player territoryOwner = null;
+            GameState currentGameState = client.getCurrentGameState(); // Bu metodu Client sınıfına eklemeniz gerekebilir
+            if (currentGameState != null) {
+                for (Territory t : currentGameState.getTerritories()) {
+                    if (t.getName().equals(territoryName)) {
+                        territoryOwner = t.getOwner();
+                        break;
+                    }
+                }
+            }
+            
+            // First, send territory selection to server
+            selectTerritory(territoryName);
+            
+            // Then handle based on phase
+            switch (currentPhase) {
+                case SETUP:
+                case REINFORCEMENT:
+                    if (thisPlayer != null && thisPlayer.getName().equals(labelCurrentPlayingPlayerUI.getText())) {
+                        // Kontrol: Bölge mevcut oyuncuya mı ait?
+                        if (territoryOwner == null || !territoryOwner.getName().equals(thisPlayer.getName())) {
+                            addLogMessage("You can only place soldiers in your own territories.");
+                            showErrorMessage("You can only place soldiers in your own territories.");
+                            return;
+                        }
+                        
+                        // This is the current player's turn, allow soldier placement
+                        int maxSoldiers = Integer.parseInt(labelThisPlayerSoldierNumberUI.getText());
+                        if (maxSoldiers > 0) {
+                            int soldiersToPlace = showPlaceSoldiersDialog(territoryName, maxSoldiers);
+                            if (soldiersToPlace > 0) {
+                                placeSoldiers(territoryName, soldiersToPlace);
+                            }
+                        } else {
+                            addLogMessage("No soldiers left to place.");
+                        }
+                    }
+                    break;
+                    
+                case ATTACK:
+                    // If no territory is selected, select this one as attacker
+                    if (selectedTerritory == null) {
+                        // Kontrol: Saldıran bölge mevcut oyuncuya mı ait?
+                        if (territoryOwner == null || !territoryOwner.getName().equals(thisPlayer.getName())) {
+                            addLogMessage("You can only attack from your own territories.");
+                            showErrorMessage("You can only attack from your own territories.");
+                            return;
+                        }
+                        selectedTerritory = new Territory(territoryName, Territory.Continent.CUSTOM); // Just store the name
+                        addLogMessage("Selected " + territoryName + " as attacking territory.");
+                    } else {
+                        // A territory is already selected, this must be the target
+                        // Kontrol: Hedef bölge oyuncunun kendi bölgesi olmamalı
+                        if (territoryOwner != null && territoryOwner.getName().equals(thisPlayer.getName())) {
+                            addLogMessage("You cannot attack your own territory.");
+                            showErrorMessage("You cannot attack your own territory.");
+                            selectedTerritory = null; // Seçimi sıfırla
+                            return;
+                        }
+                        targetTerritory = new Territory(territoryName, Territory.Continent.CUSTOM);
+                        addLogMessage("Selected " + territoryName + " as target territory.");
+                        
+                        // Ask for soldier count
+                        int maxAttackers = 3; // Simplified for now
+                        int attackingSoldiers = showAttackDialog(selectedTerritory.getName(), maxAttackers);
+                        
+                        if (attackingSoldiers > 0) {
+                            // Send the attack
+                            attack(selectedTerritory.getName(), targetTerritory.getName(), attackingSoldiers);
+                            
+                            // Reset selections
+                            selectedTerritory = null;
+                            targetTerritory = null;
+                        }
+                    }
+                    break;
+                    
+                case FORTIFICATION:
+                    // If no territory is selected, select this one as source
+                    if (selectedTerritory == null) {
+                        // Kontrol: Kaynak bölge mevcut oyuncuya mı ait?
+                        if (territoryOwner == null || !territoryOwner.getName().equals(thisPlayer.getName())) {
+                            addLogMessage("You can only fortify from your own territories.");
+                            showErrorMessage("You can only fortify from your own territories.");
+                            return;
+                        }
+                        selectedTerritory = new Territory(territoryName, Territory.Continent.CUSTOM); // Just store the name
+                        addLogMessage("Selected " + territoryName + " as source territory.");
+                    } else {
+                        // A territory is already selected, this must be the target
+                        // Kontrol: Hedef bölge mevcut oyuncuya mı ait?
+                        if (territoryOwner == null || !territoryOwner.getName().equals(thisPlayer.getName())) {
+                            addLogMessage("You can only fortify to your own territories.");
+                            showErrorMessage("You can only fortify to your own territories.");
+                            selectedTerritory = null; // Seçimi sıfırla
+                            return;
+                        }
+                        targetTerritory = new Territory(territoryName, Territory.Continent.CUSTOM);
+                        addLogMessage("Selected " + territoryName + " as destination territory.");
+                        
+                        // Ask for soldier count
+                        int maxFortify = 5; // Simplified for now
+                        int fortifySoldiers = showFortifyDialog(selectedTerritory.getName(), maxFortify);
+                        
+                        if (fortifySoldiers > 0) {
+                            // Send the fortification
+                            fortify(selectedTerritory.getName(), targetTerritory.getName(), fortifySoldiers);
+                            
+                            // Reset selections
+                            selectedTerritory = null;
+                            targetTerritory = null;
+                        }
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            addLogMessage("Error handling territory button click: " + e.getMessage());
+            e.printStackTrace(); // Hata ayıklama için stack trace'i yazdır
+        }
+    }
+    
+    /**
+     * Find territory button by name
+     * @param territoryName The territory name
+     * @return The button for the territory or null if not found
+     */
+    private JButton findButtonByTerritoryName(String territoryName) {
+        return territoryButtons.get(territoryName);
+    }
+    
+    /**
+     * Find territory name by button
+     * @param button The button to find the territory name for
+     * @return The territory name or null if not found
+     */
+    private String findTerritoryNameByButton(JButton button) {
+        for (Map.Entry<String, JButton> entry : territoryButtons.entrySet()) {
+            if (entry.getValue() == button) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Attach territory button click handlers
+     */
+    private void attachTerritoryButtonClickHandlers() {
+        for (Map.Entry<String, JButton> entry : territoryButtons.entrySet()) {
+            final String territoryName = entry.getKey();
+            final JButton button = entry.getValue();
+            
+            button.addActionListener(e -> handleTerritoryButtonClick(button, territoryName));
+        }
+    }
+    
+    /**
+     * Sends a place soldiers action to the server
+     * @param territoryName The territory name
+     * @param count The number of soldiers
+     */
+    public void placeSoldiers(String territoryName, int count) {
+        if (client != null) {
+            try {
+                // Mevcut asker sayısını kontrol et
+                int currentAvailableSoldiers = Integer.parseInt(labelThisPlayerSoldierNumberUI.getText());
+                
+                // Eğer yerleştirmek istenen asker sayısı mevcut asker sayısından fazlaysa
+                if (count > currentAvailableSoldiers) {
+                    showErrorMessage("Yeterli asker sayınız yok! En fazla " + currentAvailableSoldiers + " asker yerleştirebilirsiniz.");
+                    return;
+                }
+                
+                // Debug bilgisi ekle
+                addLogMessage("DEBUG: Placing " + count + " soldiers in " + territoryName);
+                
+                // Sunucunun beklediği formatta veri gönder - Map<String, Object> formatında
+                Map<String, Object> data = new HashMap<>();
+                data.put("territory", territoryName);
+                data.put("count", count);
+                
+                // Önceden UI güncellenir - geçici gösterge (sonra sunucudan doğru değer gelecek)
+                JButton button = territoryButtons.get(territoryName);
+                if (button != null) {
+                    try {
+                        // Mevcut asker sayısını al
+                        int currentSoldiers = Integer.parseInt(button.getText());
+                        // Yeni asker sayısını geçici olarak güncelle
+                        button.setText(String.valueOf(currentSoldiers + count));
+                        button.repaint(); // Butonu hemen yeniden çizdir
+                        
+                        // Kendi asker sayımızı da geçici olarak güncelle
+                        labelThisPlayerSoldierNumberUI.setText(String.valueOf(currentAvailableSoldiers - count));
+                    } catch (NumberFormatException e) {
+                        addLogMessage("ERROR: Failed to update button text: " + e.getMessage());
+                    }
+                }
+                
+                addLogMessage("Sending soldiers placed request to server...");
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.SOLDIERS_PLACED,
+                    data
+                ));
+                
+            } catch (Exception e) {
+                addLogMessage("Error sending place soldiers action: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Sends an attack action to the server
+     * @param attackerTerritoryName The attacker territory name
+     * @param defenderTerritoryName The defender territory name
+     * @param soldierCount The number of soldiers to attack with
+     */
+    public void attack(String attackerTerritoryName, String defenderTerritoryName, int soldierCount) {
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.ATTACK_MADE,
+                    Map.of(
+                        "attacker", attackerTerritoryName, 
+                        "defender", defenderTerritoryName,
+                        "soldiers", soldierCount
+                    )
+                ));
+            } catch (Exception e) {
+                addLogMessage("Error sending attack action: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Sends a fortify action to the server
+     * @param fromTerritoryName The source territory name
+     * @param toTerritoryName The destination territory name
+     * @param soldierCount The number of soldiers to fortify with
+     */
+    public void fortify(String fromTerritoryName, String toTerritoryName, int soldierCount) {
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.FORTIFICATION_MADE,
+                    Map.of(
+                        "from", fromTerritoryName, 
+                        "to", toTerritoryName,
+                        "count", soldierCount
+                    )
+                ));
+            } catch (Exception e) {
+                addLogMessage("Error sending fortify action: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Sends a next phase action to the server
+     */
+    public void nextPhase() {
+        if (client != null) {
+            try {
+                client.sendMessage(new GameMessage(
+                    GameMessage.GameMessageType.TURN_ENDED,
+                    null
+                ));
+            } catch (Exception e) {
+                addLogMessage("Error sending next phase action: " + e.getMessage());
+            }
+        }
+    }
+    
+    // Add button click handlers
+    
+    private void buttonAfghanistanActionPerformed(java.awt.event.ActionEvent evt) {
+        handleTerritoryButtonClick(buttonAfghanistan, "Afghanistan");
+    }
+    
+    private void buttonAlaskaActionPerformed(java.awt.event.ActionEvent evt) {
+        handleTerritoryButtonClick(buttonAlaska, "Alaska");
+    }
+    
+    // Initialize all components fully
+    public void initialize() {
+        // Set default messages
+        textareaWarLogs.setText("Game starting...\n");
+        labelCurrentGamePhase.setText("STANDBY");
+        
+        // Initialize the territory buttons map
+        initializeTerritoryButtons();
+        
+        // İlk başlatma için buton stillerini hazırla
+        for (JButton button : territoryButtons.values()) {
+            // Nötr gri renkte yuvarlak butonlar oluştur
+            Color neutralColor = new Color(200, 200, 200);
+            styleButton(button, neutralColor);
+            button.setText("0");
+        }
+        
+        // Set the finish turn button action
+        buttonFinishTurn.addActionListener(e -> nextPhase());
+        
+        // Attach button handlers for all territory buttons
+        attachTerritoryButtonClickHandlers();
+        
+        // Add initial log message
+        addLogMessage("Game initialized. Waiting for game state update...");
+    }
+
+    /**
+     * Shows a dialog for placing soldiers
+     * @param territoryName The name of the territory
+     * @param maxSoldiers The maximum number of soldiers that can be placed
+     * @return The number of soldiers to place, or -1 if cancelled
+     */
+    public int showPlaceSoldiersDialog(String territoryName, int maxSoldiers) {
+        String input = javax.swing.JOptionPane.showInputDialog(
+            this,
+            "How many soldiers do you want to place in " + territoryName + "?\n" +
+            "(You have " + maxSoldiers + " soldiers available)",
+            "Place Soldiers",
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (input == null || input.trim().isEmpty()) {
+            return -1;
+        }
+        
+        try {
+            int count = Integer.parseInt(input);
+            if (count <= 0 || count > maxSoldiers) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a number between 1 and " + maxSoldiers,
+                    "Invalid Input",
+                    javax.swing.JOptionPane.ERROR_MESSAGE
+                );
+                return -1;
+            }
+            return count;
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Please enter a valid number",
+                "Invalid Input",
+                javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+            return -1;
+        }
+    }
+    
+    /**
+     * Shows a dialog for attacking
+     * @param attackerTerritoryName The name of the attacking territory
+     * @param maxSoldiers The maximum number of soldiers that can be used
+     * @return The number of soldiers to attack with, or -1 if cancelled
+     */
+    public int showAttackDialog(String attackerTerritoryName, int maxSoldiers) {
+        int maxAttackSoldiers = Math.min(maxSoldiers - 1, GameRules.MAX_DICE_PER_ATTACK);
+        
+        String input = javax.swing.JOptionPane.showInputDialog(
+            this,
+            "How many soldiers do you want to attack with from " + attackerTerritoryName + "?\n" +
+            "(You can use up to " + maxAttackSoldiers + " soldiers)",
+            "Attack",
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (input == null || input.trim().isEmpty()) {
+            return -1;
+        }
+        
+        try {
+            int count = Integer.parseInt(input);
+            if (count <= 0 || count > maxAttackSoldiers) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a number between 1 and " + maxAttackSoldiers,
+                    "Invalid Input",
+                    javax.swing.JOptionPane.ERROR_MESSAGE
+                );
+                return -1;
+            }
+            return count;
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Please enter a valid number",
+                "Invalid Input",
+                javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+            return -1;
+        }
+    }
+    
+    /**
+     * Shows a dialog for fortifying
+     * @param fromTerritoryName The name of the source territory
+     * @param maxSoldiers The maximum number of soldiers that can be moved
+     * @return The number of soldiers to move, or -1 if cancelled
+     */
+    public int showFortifyDialog(String fromTerritoryName, int maxSoldiers) {
+        int maxFortifySoldiers = maxSoldiers - 1;
+        
+        String input = javax.swing.JOptionPane.showInputDialog(
+            this,
+            "How many soldiers do you want to move from " + fromTerritoryName + "?\n" +
+            "(You can move up to " + maxFortifySoldiers + " soldiers)",
+            "Fortify",
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (input == null || input.trim().isEmpty()) {
+            return -1;
+        }
+        
+        try {
+            int count = Integer.parseInt(input);
+            if (count <= 0 || count > maxFortifySoldiers) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a number between 1 and " + maxFortifySoldiers,
+                    "Invalid Input",
+                    javax.swing.JOptionPane.ERROR_MESSAGE
+                );
+                return -1;
+            }
+            return count;
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Please enter a valid number",
+                "Invalid Input",
+                javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+            return -1;
+        }
+    }
+    
+    /**
+     * Shows a game over message
+     * @param message The game over message
+     */
+    public void showGameOverMessage(String message) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            message,
+            "Game Over",
+            javax.swing.JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    
+    /**
+     * Shows an error message
+     * @param message The error message
+     */
+    public void showErrorMessage(String message) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            message,
+            "Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE
+        );
+    }
 }

@@ -4,19 +4,27 @@
  */
 package com.izzettinozmen.riskgame;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
  * @author ifozmen
  */
-public class GameState {
+public class GameState implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String gameId;
     private List<Player> players;
     private List<Territory> territories;
     private Player currentPlayer;
     private int currentTurn;
     private GamePhase currentPhase;
+    private boolean isGameOver;
+    private Player winner;
 
     public enum GamePhase {
         SETUP,
@@ -26,20 +34,41 @@ public class GameState {
     }
 
     public GameState() {
+        this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>();
         this.territories = new ArrayList<>();
         this.currentTurn = 1;
         this.currentPhase = GamePhase.SETUP;
+        this.isGameOver = false;
+        this.winner = null;
+    }
+
+    // Custom deserialization
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        // Restore adjacent territories for each territory
+        for (Territory territory : territories) {
+            territory.restoreAdjacentTerritories(territories);
+        }
+    }
+
+    public String getGameId() {
+        return gameId;
     }
 
     public void addPlayer(Player player) {
-        if (players.size() < GameRules.MAX_PLAYERS) {
+        if (!players.contains(player)) {
             players.add(player);
+            if (currentPlayer == null) {
+                currentPlayer = player;
+            }
         }
     }
 
     public void addTerritory(Territory territory) {
-        territories.add(territory);
+        if (!territories.contains(territory)) {
+            territories.add(territory);
+        }
     }
 
     public List<Player> getPlayers() {
@@ -63,10 +92,9 @@ public class GameState {
     }
 
     public void nextTurn() {
-        this.currentTurn++;
-        int currentPlayerIndex = players.indexOf(currentPlayer);
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        currentPlayer = players.get(currentPlayerIndex);
+        int currentIndex = players.indexOf(currentPlayer);
+        int nextIndex = (currentIndex + 1) % players.size();
+        currentPlayer = players.get(nextIndex);
     }
 
     public GamePhase getCurrentPhase() {
@@ -78,14 +106,42 @@ public class GameState {
     }
 
     public boolean isGameOver() {
-        return players.size() == 1;
+        return isGameOver;
     }
 
     public Player getWinner() {
-        if (isGameOver()) {
-            return players.get(0);
+        return winner;
+    }
+
+    public void checkGameEnd() {
+        // Eğer oyun zaten bitmişse tekrar kontrol etme
+        if (isGameOver) {
+            return;
         }
-        return null;
+
+        // Tüm bölgelerin sahibini kontrol et
+        Player firstOwner = null;
+        boolean allTerritoriesOwnedBySamePlayer = true;
+
+        for (Territory territory : territories) {
+            if (territory.getOwner() == null) {
+                allTerritoriesOwnedBySamePlayer = false;
+                break;
+            }
+
+            if (firstOwner == null) {
+                firstOwner = territory.getOwner();
+            } else if (territory.getOwner() != firstOwner) {
+                allTerritoriesOwnedBySamePlayer = false;
+                break;
+            }
+        }
+
+        // Eğer tüm bölgeler aynı oyuncuya aitse oyun biter
+        if (allTerritoriesOwnedBySamePlayer && firstOwner != null) {
+            isGameOver = true;
+            winner = firstOwner;
+        }
     }
 
     public void initializeGame() {

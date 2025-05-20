@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.*;
 import java.util.List;
 import javax.swing.JFrame;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -23,14 +25,22 @@ public class Client {
     private boolean isConnected;
     private ClientGUI gui;
     private String playerName;
-    private Object lobbyGUI; // Can be GameLobbyHost or GameLobbyPlayer
+    private String currentGameId;
+    private JFrame lobbyGUI; // Can be GameLobbyHost or GameLobbyPlayer
+    private boolean isCreatingGUI = false; // Flag to track GUI creation
+    private GameState currentGameState; // Mevcut oyun durumunu saklamak için
 
     public Client(String playerName) {
         this.playerName = playerName;
         this.isConnected = false;
     }
 
-    public void setLobbyGUI(Object lobbyGUI) {
+    // Mevcut GameState'i döndüren getter metodu
+    public GameState getCurrentGameState() {
+        return currentGameState;
+    }
+
+    public void setLobbyGUI(JFrame lobbyGUI) {
         this.lobbyGUI = lobbyGUI;
     }
 
@@ -41,67 +51,7 @@ public class Client {
                     Object obj = in.readObject();
                     if (obj instanceof GameMessage) {
                         GameMessage msg = (GameMessage) obj;
-                        switch (msg.getType()) {
-                            case PLAYER_JOINED:
-                                if (lobbyGUI instanceof GameLobbyHost) {
-                                    ((GameLobbyHost) lobbyGUI).updatePlayerList((List<String>) msg.getData());
-                                } else if (lobbyGUI instanceof GameLobbyPlayer) {
-                                    ((GameLobbyPlayer) lobbyGUI).updatePlayerList((List<String>) msg.getData());
-                                }
-                                break;
-                            case LOBBY_CLOSED:
-                                if (lobbyGUI instanceof JFrame) {
-                                    ((JFrame) lobbyGUI).dispose();
-                                }
-                                StartScreen startScreen = new StartScreen(playerName);
-                                startScreen.setVisible(true);
-                                isConnected = false;
-                                break;
-                            case PLAYER_LEFT:
-                                if (msg.getData() instanceof String) {
-                                    javax.swing.SwingUtilities.invokeLater(() -> {
-                                        javax.swing.JOptionPane.showMessageDialog(null, (String) msg.getData(), "Lobby Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                                        if (lobbyGUI instanceof JFrame) {
-                                            ((JFrame) lobbyGUI).dispose();
-                                        }
-                                        StartScreen startScreen2 = new StartScreen(playerName);
-                                        startScreen2.setVisible(true);
-                                        isConnected = false;
-                                    });
-                                }
-                                break;
-                            case PLAYER_KICKED:
-                                javax.swing.SwingUtilities.invokeLater(() -> {
-                                    javax.swing.JOptionPane.showMessageDialog(null, "You have been kicked from the lobby.", "Kicked", javax.swing.JOptionPane.WARNING_MESSAGE);
-                                    if (lobbyGUI instanceof JFrame) {
-                                        ((JFrame) lobbyGUI).dispose();
-                                    }
-                                    StartScreen startScreen3 = new StartScreen(playerName);
-                                    startScreen3.setVisible(true);
-                                    isConnected = false;
-                                });
-                                break;
-                            case PLAYER_BANNED:
-                                javax.swing.SwingUtilities.invokeLater(() -> {
-                                    javax.swing.JOptionPane.showMessageDialog(null, "You have been banned from the lobby.", "Banned", javax.swing.JOptionPane.ERROR_MESSAGE);
-                                    if (lobbyGUI instanceof JFrame) {
-                                        ((JFrame) lobbyGUI).dispose();
-                                    }
-                                    StartScreen startScreen4 = new StartScreen(playerName);
-                                    startScreen4.setVisible(true);
-                                    isConnected = false;
-                                });
-                                break;
-                            case GAME_STARTED:
-                                javax.swing.SwingUtilities.invokeLater(() -> {
-                                    if (lobbyGUI instanceof JFrame) {
-                                        ((JFrame) lobbyGUI).dispose();
-                                    }
-                                    ClientGUI clientGUI = new ClientGUI();
-                                    clientGUI.setVisible(true);
-                                });
-                                break;
-                        }
+                        handleMessage(msg);
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -210,5 +160,330 @@ public class Client {
 
     public void setGUI(ClientGUI gui) {
         this.gui = gui;
+    }
+
+    private void handleMessage(Object message) {
+        if (message instanceof GameMessage) {
+            GameMessage gameMessage = (GameMessage) message;
+            System.out.println("Received message type: " + gameMessage.getType());
+            
+            switch (gameMessage.getType()) {
+                case LOBBY_CREATED:
+                    handleLobbyCreated(gameMessage);
+                    break;
+                case LOBBY_JOINED:
+                    handleLobbyJoined(gameMessage);
+                    break;
+                case PLAYER_JOINED:
+                    handlePlayerJoined(gameMessage);
+                    break;
+                case PLAYER_LEFT:
+                    handlePlayerLeft(gameMessage);
+                    break;
+                case PLAYER_KICKED:
+                    handlePlayerKicked(gameMessage);
+                    break;
+                case PLAYER_BANNED:
+                    handlePlayerBanned(gameMessage);
+                    break;
+                case LOBBY_CLOSED:
+                    handleLobbyClosed(gameMessage);
+                    break;
+                case GAME_STARTED:
+                    handleGameStarted(gameMessage);
+                    break;
+                case GAME_STATE_UPDATE:
+                    handleGameStateUpdate(gameMessage);
+                    break;
+                case TURN_STARTED:
+                    handleTurnStarted(gameMessage);
+                    break;
+                case TURN_ENDED:
+                    handleTurnEnded(gameMessage);
+                    break;
+                case TERRITORY_SELECTED:
+                    handleTerritorySelected(gameMessage);
+                    break;
+                case SOLDIERS_PLACED:
+                    handleSoldiersPlaced(gameMessage);
+                    break;
+                case ATTACK_MADE:
+                    handleAttackMade(gameMessage);
+                    break;
+                case FORTIFICATION_MADE:
+                    handleFortificationMade(gameMessage);
+                    break;
+                case GAME_OVER:
+                    handleGameOver(gameMessage);
+                    break;
+                case ERROR_MESSAGE:
+                case INVALID_MOVE:
+                case NOT_YOUR_TURN:
+                    handleErrorMessage(gameMessage);
+                    break;
+                case PHASE_CHANGED:
+                    handlePhaseChanged(gameMessage);
+                    break;
+            }
+        }
+    }
+
+    private void handleLobbyCreated(GameMessage message) {
+        boolean success = (boolean) message.getData();
+        if (success) {
+            System.out.println("Lobby created successfully");
+            // Player list will be received in a separate PLAYER_JOINED message
+        } else {
+            System.out.println("Failed to create lobby");
+            // Update UI to show lobby creation failure
+        }
+    }
+
+    private void handleLobbyJoined(GameMessage message) {
+        boolean success = (boolean) message.getData();
+        if (success) {
+            System.out.println("Joined lobby successfully");
+            // Player list will be received in a separate PLAYER_JOINED message
+        } else {
+            System.out.println("Failed to join lobby");
+            // Update UI to show lobby join failure
+        }
+    }
+
+    private void handlePlayerJoined(GameMessage message) {
+        try {
+            List<String> playerList = (List<String>) message.getData();
+            System.out.println("Player list updated: " + playerList);
+            
+            // Update UI based on lobby type
+            if (lobbyGUI instanceof GameLobbyHost) {
+                ((GameLobbyHost) lobbyGUI).updatePlayerList(playerList);
+            } else if (lobbyGUI instanceof GameLobbyPlayer) {
+                ((GameLobbyPlayer) lobbyGUI).updatePlayerList(playerList);
+            }
+        } catch (ClassCastException e) {
+            System.out.println("Error updating player list: " + e.getMessage());
+        }
+    }
+
+    private void handlePlayerLeft(GameMessage message) {
+        try {
+            List<String> playerList = (List<String>) message.getData();
+            System.out.println("Player list updated after player left: " + playerList);
+            
+            // Update UI based on lobby type
+            if (lobbyGUI instanceof GameLobbyHost) {
+                ((GameLobbyHost) lobbyGUI).updatePlayerList(playerList);
+            } else if (lobbyGUI instanceof GameLobbyPlayer) {
+                ((GameLobbyPlayer) lobbyGUI).updatePlayerList(playerList);
+            }
+        } catch (ClassCastException e) {
+            System.out.println("Error updating player list: " + e.getMessage());
+        }
+    }
+
+    private void handlePlayerKicked(GameMessage message) {
+        String reason = (String) message.getData();
+        System.out.println("You have been kicked: " + reason);
+        // Update UI to show kick message and return to main menu
+    }
+
+    private void handlePlayerBanned(GameMessage message) {
+        String reason = (String) message.getData();
+        System.out.println("You have been banned: " + reason);
+        // Update UI to show ban message and return to main menu
+    }
+
+    private void handleLobbyClosed(GameMessage message) {
+        System.out.println("Lobby has been closed");
+        // Update UI to return to main menu
+    }
+
+    private void handleGameStarted(GameMessage message) {
+        String gameId = (String) message.getData();
+        System.out.println("Game started with ID: " + gameId);
+        this.currentGameId = gameId;
+        
+        // Only create a new GUI if one doesn't already exist and we're not already creating one
+        if (gui == null && lobbyGUI != null && !isCreatingGUI) {
+            // Set the flag to indicate we're starting to create a GUI
+            isCreatingGUI = true;
+            
+            // Hide the lobby GUI
+            lobbyGUI.setVisible(false);
+            
+            // Create the game GUI
+            java.awt.EventQueue.invokeLater(() -> {
+                ClientGUI gameGUI = new ClientGUI();
+                gameGUI.setClient(this);
+                gameGUI.setThisPlayer(new Player(playerName));
+                gameGUI.setVisible(true);
+                gameGUI.addLogMessage("Game started with ID: " + gameId);
+                
+                // Set the game GUI reference
+                this.gui = gameGUI;
+                
+                // GUI creation is complete
+                isCreatingGUI = false;
+            });
+        } else if (gui != null) {
+            gui.addLogMessage("Game started with ID: " + gameId);
+        }
+    }
+
+    private void handleGameStateUpdate(GameMessage message) {
+        try {
+            GameState gameState = (GameState) message.getData();
+            this.currentGameState = gameState; // Mevcut oyun durumunu güncelle
+            System.out.println("Game state updated");
+            
+            // Debug bilgisi yazdır
+            System.out.println("Territory count in GameState: " + gameState.getTerritories().size());
+            int territoriesWithOwner = 0;
+            for (Territory t : gameState.getTerritories()) {
+                if (t.getOwner() != null) {
+                    territoriesWithOwner++;
+                }
+            }
+            System.out.println("Territories with owner: " + territoriesWithOwner);
+            
+            // If we're already creating a GUI, queue this update to be processed when the GUI is ready
+            if (isCreatingGUI) {
+                java.awt.EventQueue.invokeLater(() -> {
+                    // By the time this runs, the GUI should be created
+                    if (gui != null) {
+                        gui.updateGameState(gameState);
+                    }
+                });
+                return;
+            }
+            
+            // Ensure the game GUI exists when we get a game state update
+            if (gui == null && !isCreatingGUI) {
+                // Set the flag to indicate we're starting to create a GUI
+                isCreatingGUI = true;
+                
+                // If the GUI doesn't exist yet, create it
+                java.awt.EventQueue.invokeLater(() -> {
+                    ClientGUI gameGUI = new ClientGUI();
+                    gameGUI.setClient(this);
+                    // Find our player in the game state
+                    for (Player player : gameState.getPlayers()) {
+                        if (player.getName().equals(playerName)) {
+                            gameGUI.setThisPlayer(player);
+                            break;
+                        }
+                    }
+                    gameGUI.setVisible(true);
+                    gameGUI.addLogMessage("Received initial game state");
+                    
+                    // Set the game GUI reference
+                    this.gui = gameGUI;
+                    
+                    // Close lobby GUI if it exists
+                    if (lobbyGUI != null) {
+                        lobbyGUI.setVisible(false);
+                    }
+                    
+                    // Update state after GUI is created
+                    gameGUI.updateGameState(gameState);
+                    
+                    // GUI creation is complete
+                    isCreatingGUI = false;
+                });
+            } else {
+                gui.updateGameState(gameState);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in handleGameStateUpdate: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void handleTurnStarted(GameMessage message) {
+        String turnMessage = (String) message.getData();
+        System.out.println("Turn started: " + turnMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage(turnMessage);
+        }
+    }
+
+    private void handleTurnEnded(GameMessage message) {
+        System.out.println("Turn ended");
+        
+        if (gui != null) {
+            gui.addLogMessage("Turn ended");
+        }
+    }
+
+    private void handleTerritorySelected(GameMessage message) {
+        String territoryName = (String) message.getData();
+        String playerName = message.getSender();
+        System.out.println("Territory selected: " + territoryName + " by " + playerName);
+        
+        if (gui != null) {
+            gui.highlightTerritory(territoryName, true);
+            gui.addLogMessage(playerName + " selected " + territoryName);
+        }
+    }
+
+    private void handleSoldiersPlaced(GameMessage message) {
+        String placementMessage = (String) message.getData();
+        System.out.println("Soldiers placed: " + placementMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage(placementMessage);
+            
+            // Kullanıcı arayüzünde asker yerleştirme mesajını belirgin hale getirmek için
+            gui.addLogMessage("Waiting for updated game state...");
+        }
+    }
+
+    private void handleAttackMade(GameMessage message) {
+        String attackMessage = (String) message.getData();
+        System.out.println("Attack made: " + attackMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage(attackMessage);
+        }
+    }
+
+    private void handleFortificationMade(GameMessage message) {
+        String fortificationMessage = (String) message.getData();
+        System.out.println("Fortification made: " + fortificationMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage(fortificationMessage);
+        }
+    }
+
+    private void handleGameOver(GameMessage message) {
+        String winnerMessage = (String) message.getData();
+        System.out.println("Game Over: " + winnerMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage("GAME OVER: " + winnerMessage);
+            gui.showGameOverMessage(winnerMessage);
+        }
+    }
+
+    private void handleErrorMessage(GameMessage message) {
+        String errorMessage = (String) message.getData();
+        System.out.println("Error: " + errorMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage("ERROR: " + errorMessage);
+            gui.showErrorMessage(errorMessage);
+        }
+    }
+    
+    private void handlePhaseChanged(GameMessage message) {
+        String phaseMessage = (String) message.getData();
+        System.out.println("Phase changed: " + phaseMessage);
+        
+        if (gui != null) {
+            gui.addLogMessage(phaseMessage);
+        }
     }
 }
