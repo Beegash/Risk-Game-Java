@@ -1,3 +1,10 @@
+/**
+ * DialogAttack.java
+ * This class manages the attack dialog in the Risk game.
+ * It provides a user interface for selecting source and target territories,
+ * choosing the number of dice to roll, and initiating attacks.
+ */
+
 package client.dialogs;
 
 import common.CommonState;
@@ -13,13 +20,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DialogAttack {
-
+    /**
+     * Shows the attack dialog for initiating an attack between territories
+     * 
+     * @param gameState Current state of the game
+     * @param currentPlayer Name of the current player
+     * @param client Client game instance for sending moves
+     */
     public static void show(CommonState gameState, String currentPlayer, ClientGame client) {
+        // Create and configure the dialog window
         JDialog dialog = new JDialog((Frame) null, "🎯 Attack Territory", true);
         dialog.setSize(440, 400);
         dialog.setLocationRelativeTo(null);
         dialog.setUndecorated(true);
 
+        // Create and configure the main card panel
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(245, 245, 245));
@@ -27,6 +42,7 @@ public class DialogAttack {
                 BorderFactory.createLineBorder(new Color(67, 181, 129), 3, true),
                 BorderFactory.createEmptyBorder(22, 32, 22, 32)));
 
+        // Create and configure the title label
         JLabel title = new JLabel(
                 "<html><div style='text-align:center;font-size:22px;'><span style='font-size:32px;'>⚔️</span><br><b>Attack Territory</b></div></html>",
                 SwingConstants.CENTER);
@@ -35,6 +51,7 @@ public class DialogAttack {
         card.add(title);
         card.add(Box.createVerticalStrut(18));
 
+        // Create and configure the source territory panel
         JPanel fromPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         fromPanel.setOpaque(false);
         JLabel fromLabel = new JLabel("From:");
@@ -49,6 +66,7 @@ public class DialogAttack {
         fromPanel.add(fromInfo);
         card.add(fromPanel);
 
+        // Create and configure the target territory panel
         JPanel toPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         toPanel.setOpaque(false);
         JLabel toLabel = new JLabel("To:");
@@ -65,6 +83,7 @@ public class DialogAttack {
 
         card.add(Box.createVerticalStrut(14));
 
+        // Create and configure the dice selection panel
         JPanel dicePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         dicePanel.setOpaque(false);
         JLabel diceLabel = new JLabel("Dice:");
@@ -84,6 +103,7 @@ public class DialogAttack {
 
         card.add(Box.createVerticalStrut(12));
 
+        // Create and configure the error label
         JLabel errorLabel = new JLabel("");
         errorLabel.setForeground(new Color(200, 40, 40));
         errorLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -91,6 +111,7 @@ public class DialogAttack {
         card.add(errorLabel);
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setOpaque(false);
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -117,6 +138,7 @@ public class DialogAttack {
         btnPanel.add(Box.createHorizontalGlue());
         card.add(btnPanel);
 
+        // Populate source territory combo box with valid territories
         CommonPlayer player = gameState.getPlayers().get(currentPlayer);
         List<String> playerTerritories = player.getTerritories();
         for (String territory : playerTerritories) {
@@ -126,12 +148,16 @@ public class DialogAttack {
             }
         }
 
+        // Add action listener for source territory selection
         fromBox.addActionListener((ActionEvent e) -> {
             String from = (String) fromBox.getSelectedItem();
             toBox.removeAllItems();
             if (from != null) {
+                // Update source territory info
                 CommonTerritory fromTerritory = gameState.getTerritories().get(from);
                 fromInfo.setText(" (" + fromTerritory.getArmies() + " armies)");
+                
+                // Populate target territory combo box with enemy neighbors
                 List<String> neighbors = fromTerritory.getAdjacentTerritories();
                 List<String> enemyNeighbors = neighbors.stream()
                         .filter(name -> {
@@ -149,15 +175,18 @@ public class DialogAttack {
             }
         });
 
+        // Select first source territory if available
         if (fromBox.getItemCount() > 0) {
             fromBox.setSelectedIndex(0);
-
         }
 
+        // Add action listener for the Attack button
         attackBtn.addActionListener((ActionEvent e) -> {
             String from = (String) fromBox.getSelectedItem();
             String to = (String) toBox.getSelectedItem();
             int dice = diceSlider.getValue();
+            
+            // Validate attack parameters
             if (from == null || to == null) {
                 errorLabel.setText("⚠️ Please select both territories.");
                 return;
@@ -171,11 +200,14 @@ public class DialogAttack {
                 errorLabel.setText("⚠️ Not enough armies for this many dice.");
                 return;
             }
+            
+            // Send attack move to server
             CommonMessages attack = new CommonMessages(CommonMessages.Type.ATTACK, from, to, dice);
             client.sendMove(attack);
             dialog.dispose();
         });
 
+        // Add action listener for the Cancel button
         cancelBtn.addActionListener(e -> dialog.dispose());
 
         card.setAlignmentX(Component.CENTER_ALIGNMENT);

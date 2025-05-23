@@ -1,3 +1,10 @@
+/**
+ * DialogArmyPlace.java
+ * This class manages the dialog for placing armies on territories during the game.
+ * It provides a slider interface for selecting the number of armies to place
+ * and handles the validation and submission of army placement moves.
+ */
+
 package client.dialogs;
 
 import common.CommonState;
@@ -10,7 +17,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DialogArmyPlace {
+    /**
+     * Shows the army placement dialog for a specific territory
+     * 
+     * @param gameState Current state of the game
+     * @param currentPlayer Name of the current player
+     * @param countryName Name of the territory to place armies on
+     * @param client Client game instance for sending moves
+     */
     public static void show(CommonState gameState, String currentPlayer, String countryName, ClientGame client) {
+        // Get player and check available armies
         CommonPlayer player = gameState.getPlayers().get(currentPlayer);
         int availableArmies = player.getAvailableArmies();
         if (availableArmies <= 0) {
@@ -19,17 +35,20 @@ public class DialogArmyPlace {
             return;
         }
 
+        // Validate territory
         CommonTerritory territory = gameState.getTerritories().get(countryName);
         if (territory == null) {
             JOptionPane.showMessageDialog(null, "Invalid territory.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Create and configure the dialog window
         JDialog dialog = new JDialog((Frame) null, "🪖 Place Armies", true);
         dialog.setSize(420, 300);
         dialog.setLocationRelativeTo(null);
         dialog.setUndecorated(true);
 
+        // Create and configure the main card panel
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(245, 245, 245));
@@ -37,6 +56,7 @@ public class DialogArmyPlace {
                 BorderFactory.createLineBorder(new Color(67, 181, 129), 3, true),
                 BorderFactory.createEmptyBorder(22, 32, 22, 32)));
 
+        // Create and configure the title label
         JLabel title = new JLabel(
                 "<html><div style='text-align:center;font-size:22px;'><span style='font-size:32px;'>🪖</span><br><b>Place Armies</b></div></html>",
                 SwingConstants.CENTER);
@@ -45,6 +65,7 @@ public class DialogArmyPlace {
         card.add(title);
         card.add(Box.createVerticalStrut(16));
 
+        // Create and configure the country information panel
         JPanel countryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         countryPanel.setOpaque(false);
         JLabel countryLabel = new JLabel("Country:");
@@ -59,6 +80,7 @@ public class DialogArmyPlace {
         countryPanel.add(countryInfo);
         card.add(countryPanel);
 
+        // Create and configure the available armies label
         JLabel availableLabel = new JLabel("Available armies: " + availableArmies);
         availableLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         availableLabel.setForeground(new Color(67, 181, 129));
@@ -66,6 +88,7 @@ public class DialogArmyPlace {
         card.add(availableLabel);
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the army count slider panel
         JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         sliderPanel.setOpaque(false);
         JLabel countLabel = new JLabel("Count:");
@@ -86,6 +109,7 @@ public class DialogArmyPlace {
         sliderPanel.add(armyIcon);
         card.add(sliderPanel);
 
+        // Configure slider labels based on available armies
         if (availableArmies <= 10) {
             armySlider.setPaintLabels(true);
         } else {
@@ -98,12 +122,14 @@ public class DialogArmyPlace {
             armySlider.setPaintLabels(true);
         }
 
+        // Add change listener to update selected count label
         armySlider.addChangeListener(e -> {
             selectedCountLabel.setText(String.valueOf(armySlider.getValue()));
         });
 
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the error label
         JLabel errorLabel = new JLabel("");
         errorLabel.setForeground(new Color(200, 40, 40));
         errorLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -111,6 +137,7 @@ public class DialogArmyPlace {
         card.add(errorLabel);
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setOpaque(false);
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -137,6 +164,7 @@ public class DialogArmyPlace {
         btnPanel.add(Box.createHorizontalGlue());
         card.add(btnPanel);
 
+        // Add action listener for the Place button
         okBtn.addActionListener(e -> {
             int count = armySlider.getValue();
             if (count < 1 || count > availableArmies) {
@@ -148,6 +176,7 @@ public class DialogArmyPlace {
             dialog.dispose();
         });
 
+        // Add action listener for the Cancel button
         cancelBtn.addActionListener(e -> dialog.dispose());
 
         card.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -1,3 +1,10 @@
+/**
+ * UIGameMessageManager.java
+ * This class manages all dialog boxes and message displays in the Risk game interface.
+ * It provides methods for showing errors, warnings, info messages, input dialogs,
+ * confirmation dialogs, and game over screens with consistent styling.
+ */
+
 package client.ui;
 
 import client.ClientGame;
@@ -7,6 +14,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UIGameMessageManager {
+    /**
+     * Creates and displays a modern-style dialog box with custom styling
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Message to display in the dialog
+     * @param title Title of the dialog window
+     * @param bgColor Background color for the dialog
+     * @param fgColor Foreground color for the text
+     * @param icon Emoji icon to display above the message
+     */
     private static void showModernDialog(Component parent, String message, String title, Color bgColor, Color fgColor,
             String icon) {
         Frame frame = parent instanceof Frame ? (Frame) parent : (Frame) SwingUtilities.getWindowAncestor(parent);
@@ -15,11 +32,13 @@ public class UIGameMessageManager {
         dialog.setResizable(false);
         dialog.setUndecorated(true);
 
+        // Create and configure the main panel
         JPanel panel = new JPanel();
         panel.setBackground(bgColor);
         panel.setBorder(UIConstants.Borders.EMPTY_20);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+        // Create and configure the message label with icon
         JLabel msgLabel = new JLabel(
                 "<html><div style='text-align:center;font-size:18px;'><span style='font-size:28px;'>" + icon
                         + "</span><br>" + message + "</div></html>",
@@ -31,6 +50,7 @@ public class UIGameMessageManager {
         panel.add(Box.createVerticalStrut(16));
         panel.add(Box.createVerticalGlue());
 
+        // Create and configure the OK button
         JButton okBtn = new JButton("OK");
         okBtn.setFont(UIConstants.Fonts.BUTTON);
         okBtn.setBackground(new Color(67, 181, 129));
@@ -48,18 +68,43 @@ public class UIGameMessageManager {
         dialog.setVisible(true);
     }
 
+    /**
+     * Shows an error dialog with a red theme
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Error message to display
+     */
     public static void showError(Component parent, String message) {
         showModernDialog(parent, message, "Error", new Color(60, 30, 30), Color.RED, "❌");
     }
 
+    /**
+     * Shows a warning dialog with a yellow theme
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Warning message to display
+     */
     public static void showWarning(Component parent, String message) {
         showModernDialog(parent, message, "Warning", new Color(60, 60, 30), new Color(255, 200, 40), "⚠️");
     }
 
+    /**
+     * Shows an information dialog with a neutral theme
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Information message to display
+     */
     public static void showInfo(Component parent, String message) {
         showModernDialog(parent, message, "Info", new Color(35, 39, 42), UIConstants.Colors.TEXT_PRIMARY, "ℹ️");
     }
 
+    /**
+     * Shows an input dialog with a text field
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Prompt message to display
+     * @return The text entered by the user, or null if cancelled
+     */
     public static String showInput(Component parent, String message) {
         final String[] result = { null };
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(parent), "Input", true);
@@ -67,11 +112,13 @@ public class UIGameMessageManager {
         dialog.setUndecorated(true);
         dialog.setLocationRelativeTo(parent);
 
+        // Create and configure the main panel
         JPanel panel = new JPanel();
         panel.setBackground(new Color(35, 39, 42));
         panel.setBorder(UIConstants.Borders.EMPTY_20);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+        // Create and configure the message label
         JLabel msgLabel = new JLabel(
                 "<html><div style='text-align:center;font-size:18px;'><span style='font-size:28px;'>✏️</span><br>"
                         + message + "</div></html>",
@@ -82,6 +129,7 @@ public class UIGameMessageManager {
         panel.add(msgLabel);
         panel.add(Box.createVerticalStrut(12));
 
+        // Create and configure the input field
         JTextField inputField = new JTextField();
         inputField.setFont(UIConstants.Fonts.TEXT);
         inputField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
@@ -89,6 +137,7 @@ public class UIGameMessageManager {
         panel.add(Box.createVerticalStrut(16));
         panel.add(Box.createVerticalGlue());
 
+        // Create and configure the button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setOpaque(false);
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -127,6 +176,13 @@ public class UIGameMessageManager {
         return result[0];
     }
 
+    /**
+     * Shows a confirmation dialog with Yes/No buttons
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Confirmation message to display
+     * @return true if user clicked Yes, false if No or cancelled
+     */
     public static boolean showConfirm(Component parent, String message) {
         final boolean[] confirmed = { false };
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(parent), "Confirm", true);
@@ -134,11 +190,13 @@ public class UIGameMessageManager {
         dialog.setUndecorated(true);
         dialog.setLocationRelativeTo(parent);
 
+        // Create and configure the main panel
         JPanel panel = new JPanel();
         panel.setBackground(new Color(35, 39, 42));
         panel.setBorder(UIConstants.Borders.EMPTY_20);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+        // Create and configure the message label
         JLabel msgLabel = new JLabel(
                 "<html><div style='text-align:center;font-size:18px;'><span style='font-size:28px;'>❓</span><br>"
                         + message + "</div></html>",
@@ -150,6 +208,7 @@ public class UIGameMessageManager {
         panel.add(Box.createVerticalStrut(18));
         panel.add(Box.createVerticalGlue());
 
+        // Create and configure the button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setOpaque(false);
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -188,12 +247,28 @@ public class UIGameMessageManager {
         return confirmed[0];
     }
 
+    /**
+     * Enum defining different types of game over conditions
+     */
     public enum GameOverType {
-        WIN, LOSE, PLAYER_LEFT
+        /** Player has won the game */
+        WIN,
+        /** Player has lost the game */
+        LOSE,
+        /** Other player has left the game */
+        PLAYER_LEFT
     }
 
+    /**
+     * Shows a game over dialog with different styles based on the game outcome
+     * 
+     * @param parent Parent component to center the dialog on
+     * @param message Game over message to display
+     * @param type Type of game over condition
+     * @param client Client game instance for handling game end actions
+     */
     public static void showGameOver(Component parent, String message, GameOverType type, ClientGame client) {
-
+        // Configure dialog appearance based on game over type
         String icon;
         Color borderColor, titleColor;
         String title;
@@ -224,11 +299,13 @@ public class UIGameMessageManager {
             }
         }
 
+        // Create and configure the dialog
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(parent), title, true);
         dialog.setUndecorated(true);
         dialog.setSize(420, 320);
         dialog.setLocationRelativeTo(parent);
 
+        // Create and configure the main card panel
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(245, 245, 245));
@@ -236,12 +313,14 @@ public class UIGameMessageManager {
                 BorderFactory.createLineBorder(borderColor, 4, true),
                 BorderFactory.createEmptyBorder(28, 36, 28, 36)));
 
+        // Create and configure the icon label
         JLabel iconLabel = new JLabel(icon, SwingConstants.CENTER);
         iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 54));
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(iconLabel);
         card.add(Box.createVerticalStrut(8));
 
+        // Create and configure the title label
         JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(titleColor);

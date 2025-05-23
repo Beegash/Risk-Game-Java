@@ -1,3 +1,10 @@
+/**
+ * DialogFortify.java
+ * This class manages the fortification dialog in the Risk game.
+ * It provides a user interface for moving armies between owned territories
+ * during the fortification phase of a turn.
+ */
+
 package client.dialogs;
 
 import common.CommonState;
@@ -13,7 +20,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DialogFortify {
+    /**
+     * Shows the fortification dialog for moving armies between territories
+     * 
+     * @param gameState Current state of the game
+     * @param playerName Name of the current player
+     * @param client Client game instance for sending moves
+     */
     public static void show(CommonState gameState, String playerName, ClientGame client) {
+        // Get player's territories and filter valid source territories
         CommonPlayer player = gameState.getPlayers().get(playerName);
         List<String> ownedTerritories = player.getTerritories();
 
@@ -21,16 +36,19 @@ public class DialogFortify {
                 .filter(name -> gameState.getTerritories().get(name).getArmies() > 1)
                 .collect(Collectors.toList());
 
+        // Check if player has any valid territories to fortify from
         if (fromOptions.isEmpty()) {
             UIGameMessageManager.showWarning(null, "You have no territory with more than 1 army to fortify from.");
             return;
         }
 
+        // Create and configure the dialog window
         JDialog dialog = new JDialog((Frame) null, "🔄 Fortify", true);
         dialog.setSize(440, 340);
         dialog.setLocationRelativeTo(null);
         dialog.setUndecorated(true);
 
+        // Create and configure the main card panel
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(245, 245, 245));
@@ -38,6 +56,7 @@ public class DialogFortify {
                 BorderFactory.createLineBorder(new Color(67, 181, 129), 3, true),
                 BorderFactory.createEmptyBorder(22, 32, 22, 32)));
 
+        // Create and configure the title label
         JLabel title = new JLabel(
                 "<html><div style='text-align:center;font-size:22px;'><span style='font-size:32px;'>🔄</span><br><b>Fortify</b></div></html>",
                 SwingConstants.CENTER);
@@ -46,6 +65,7 @@ public class DialogFortify {
         card.add(title);
         card.add(Box.createVerticalStrut(16));
 
+        // Create and configure the source territory panel
         JPanel fromPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         fromPanel.setOpaque(false);
         JLabel fromLabel = new JLabel("From:");
@@ -60,6 +80,7 @@ public class DialogFortify {
         fromPanel.add(fromInfo);
         card.add(fromPanel);
 
+        // Create and configure the target territory panel
         JPanel toPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         toPanel.setOpaque(false);
         JLabel toLabel = new JLabel("To:");
@@ -76,6 +97,7 @@ public class DialogFortify {
 
         card.add(Box.createVerticalStrut(14));
 
+        // Create and configure the army count slider panel
         JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         sliderPanel.setOpaque(false);
         JLabel countLabel = new JLabel("Count:");
@@ -98,6 +120,7 @@ public class DialogFortify {
 
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the error label
         JLabel errorLabel = new JLabel("");
         errorLabel.setForeground(new Color(200, 40, 40));
         errorLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -105,6 +128,7 @@ public class DialogFortify {
         card.add(errorLabel);
         card.add(Box.createVerticalStrut(10));
 
+        // Create and configure the button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setOpaque(false);
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -131,6 +155,7 @@ public class DialogFortify {
         btnPanel.add(Box.createHorizontalGlue());
         card.add(btnPanel);
 
+        // Define the update logic for target territory and slider
         Runnable updateToBoxAndSlider = () -> {
             String from = (String) fromBox.getSelectedItem();
             toBox.removeAllItems();
@@ -145,14 +170,19 @@ public class DialogFortify {
                 fortifyBtn.setEnabled(false);
                 return;
             }
+
+            // Update source territory info
             CommonTerritory fromTerritory = gameState.getTerritories().get(from);
             fromInfo.setText(" (" + fromTerritory.getArmies() + " armies)");
 
+            // Filter and populate valid target territories
             List<String> validTargets = fromTerritory.getAdjacentTerritories().stream()
                     .filter(tName -> {
                         CommonTerritory t = gameState.getTerritories().get(tName);
                         return t.getOwner().equals(playerName);
                     }).collect(Collectors.toList());
+
+            // Update UI based on available targets
             if (validTargets.isEmpty()) {
                 toBox.setEnabled(false);
                 toInfo.setText(" (No valid target)");
@@ -172,11 +202,14 @@ public class DialogFortify {
                 }
             }
 
+            // Update army slider based on available armies
             int maxMove = fromTerritory.getArmies() - 1;
             armySlider.setMinimum(1);
             armySlider.setMaximum(maxMove);
             armySlider.setValue(1);
             selectedCountLabel.setText("1");
+
+            // Configure slider labels based on maximum value
             if (maxMove <= 10) {
                 armySlider.setPaintLabels(true);
             } else {
@@ -190,6 +223,7 @@ public class DialogFortify {
             }
         };
 
+        // Add action listeners for UI components
         fromBox.addActionListener(e -> updateToBoxAndSlider.run());
         toBox.addActionListener(e -> {
             String to = (String) toBox.getSelectedItem();
@@ -202,12 +236,16 @@ public class DialogFortify {
         });
         armySlider.addChangeListener(e -> selectedCountLabel.setText(String.valueOf(armySlider.getValue())));
 
+        // Initialize the UI state
         updateToBoxAndSlider.run();
 
+        // Add action listener for the Fortify button
         fortifyBtn.addActionListener(e -> {
             String from = (String) fromBox.getSelectedItem();
             String to = (String) toBox.getSelectedItem();
             int count = armySlider.getValue();
+
+            // Validate fortification parameters
             if (from == null || to == null) {
                 errorLabel.setText("⚠️ Please select both territories.");
                 return;
@@ -217,10 +255,14 @@ public class DialogFortify {
                 errorLabel.setText("⚠️ Invalid army count. You must leave at least 1 army behind.");
                 return;
             }
+
+            // Send fortification move to server
             CommonMessages move = new CommonMessages(CommonMessages.Type.FORTIFY, from, to, count);
             client.sendMove(move);
             dialog.dispose();
         });
+
+        // Add action listener for the Cancel button
         cancelBtn.addActionListener(e -> dialog.dispose());
 
         card.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -1,3 +1,10 @@
+/**
+ * ClientMain.java
+ * This is the main entry point for the Risk game client application.
+ * It creates the initial game window with start screen, handles user interactions,
+ * and manages the connection to the game server.
+ */
+
 package client;
 
 import javax.swing.*;
@@ -5,13 +12,19 @@ import java.awt.*;
 import client.dialogs.*;
 
 public class ClientMain extends JFrame {
+    /**
+     * Constructor for the main client window
+     * Sets up the initial game interface with background, logo, and control buttons
+     */
     public ClientMain() {
+        // Configure the main window properties
         setTitle("Risk - Start Screen");
         setSize(500, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
+        // Create a custom panel with background image
         JPanel backgroundPanel = new JPanel() {
             Image bg = new ImageIcon(getClass().getResource("/images/RiskBackground.jpg")).getImage();
 
@@ -23,12 +36,14 @@ public class ClientMain extends JFrame {
         };
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
 
+        // Load and display the Risk logo
         JLabel logoLabel;
         try {
             ImageIcon logoIcon = new ImageIcon(getClass().getResource("/images/RiskLogo.png"));
             Image scaledLogo = logoIcon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
             logoLabel = new JLabel(new ImageIcon(scaledLogo));
         } catch (Exception e) {
+            // Fallback to text if image loading fails
             logoLabel = new JLabel("Risk");
             logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 40));
             logoLabel.setForeground(Color.RED);
@@ -38,11 +53,13 @@ public class ClientMain extends JFrame {
         backgroundPanel.add(logoLabel);
         backgroundPanel.add(Box.createVerticalStrut(30));
 
+        // Create the main control panel
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setMaximumSize(new Dimension(300, 200));
 
+        // Create and style the Start Game button
         JButton startButton = new JButton("Start Game");
 
         Font btnFont = new Font("Segoe UI", Font.BOLD, 24);
@@ -70,21 +87,29 @@ public class ClientMain extends JFrame {
             }
         });
 
+        // Add action listener for the Start Game button
         startButton.addActionListener(e -> {
+            // Show player name input dialog
             String name = ClientPlayerNameDialog.showDialog(this);
 
             if (name != null && !name.trim().isEmpty()) {
                 this.setVisible(false);
+                // Create and show waiting dialog while connecting to server
                 final DialogWaiting[] waitingDialog = new DialogWaiting[1];
                 waitingDialog[0] = new DialogWaiting(null, name.trim(), exitEvent -> {
                     waitingDialog[0].dispose();
                     System.exit(0);
                 });
+                
+                // Start connection process in a new thread
                 new Thread(() -> {
                     try {
-                        ClientGame tempClient = new ClientGame("13.51.109.85", 3131, new ClientMessageListener() {
+                        // Initialize game client and connect to server
+                        //ClientGame tempClient = new ClientGame("13.51.109.85", 3131, new ClientMessageListener() {
+                        ClientGame tempClient = new ClientGame("localhost", 3131, new ClientMessageListener() {
                             @Override
                             public void onGameStateReceived(common.CommonState gameState) {
+                                // Launch the game when server responds
                                 SwingUtilities.invokeLater(() -> {
                                     waitingDialog[0].dispose();
                                     ClientFunctions.launchGame(name.trim());
@@ -103,8 +128,10 @@ public class ClientMain extends JFrame {
                             public void onDefeat(String message) {
                             }
                         });
+                        // Send join request to server
                         tempClient.sendMove(new common.CommonMessages(common.CommonMessages.Type.JOIN, name.trim()));
                     } catch (Exception ex) {
+                        // Handle connection errors
                         ex.printStackTrace();
                         SwingUtilities.invokeLater(() -> {
                             waitingDialog[0].dispose();
@@ -117,6 +144,7 @@ public class ClientMain extends JFrame {
             }
         });
 
+        // Create and style the Quit Game button
         JButton quitButton = new JButton("Quit Game");
         quitButton.setFont(btnFont);
         Color quitBg = new Color(220, 53, 69);
@@ -154,6 +182,7 @@ public class ClientMain extends JFrame {
         backgroundPanel.add(panel);
         backgroundPanel.add(Box.createVerticalGlue());
 
+        // Add Rules label with click handler
         JLabel rulesLabel = new JLabel("Rules");
         rulesLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         rulesLabel.setForeground(new Color(160, 100, 40));
@@ -169,7 +198,7 @@ public class ClientMain extends JFrame {
             }
 
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                DialogRules.showRules(ClientMain.this);
+                DialogRules.show();
             }
         });
         backgroundPanel.add(rulesLabel);
@@ -179,6 +208,10 @@ public class ClientMain extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Main method to launch the application
+     * Uses SwingUtilities.invokeLater to ensure thread safety
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ClientMain::new);
     }

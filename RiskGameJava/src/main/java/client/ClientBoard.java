@@ -1,3 +1,10 @@
+/**
+ * ClientBoard.java
+ * This class represents the visual game board for the Risk game.
+ * It handles the display of territories, armies, and player ownership on the map.
+ * The board is interactive and responds to mouse clicks for territory selection.
+ */
+
 package client;
 
 import common.CommonState;
@@ -13,17 +20,24 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ClientBoard extends JPanel {
+    // Game board visual components
+    private BufferedImage mapImage;                    // The background map image
+    private Map<String, Point> countryPositions;       // Territory positions on the map
+    private Map<String, String> countryOwners;         // Current owner of each territory
+    private Map<String, Integer> countryArmies;        // Number of armies in each territory
+    private Consumer<String> clickHandler;             // Callback for territory clicks
 
-    private BufferedImage mapImage;
-    private Map<String, Point> countryPositions;
-    private Map<String, String> countryOwners;
-    private Map<String, Integer> countryArmies;
-    private Consumer<String> clickHandler;
-
+    /**
+     * Constructor for the game board
+     * Initializes the board with the map image and sets up click handling
+     * 
+     * @param clickHandler Callback function for territory clicks
+     */
     public ClientBoard(Consumer<String> clickHandler) {
         this.clickHandler = clickHandler;
         this.setLayout(null);
 
+        // Load and scale the map image
         try {
             mapImage = ImageIO.read(getClass().getResource("/images/RiskMap.jpg"));
 
@@ -35,12 +49,14 @@ public class ClientBoard extends JPanel {
             e.printStackTrace();
         }
 
+        // Initialize data structures for game state
         countryPositions = new HashMap<>();
         countryOwners = new HashMap<>();
         countryArmies = new HashMap<>();
 
         initializeCountries();
 
+        // Add mouse listener for territory selection
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -48,9 +64,11 @@ public class ClientBoard extends JPanel {
                     return;
                 }
 
+                // Calculate scaling factors for the current window size
                 double scaleX = getWidth() / (double) mapImage.getWidth();
                 double scaleY = getHeight() / (double) mapImage.getHeight();
 
+                // Check if click is within any territory's area
                 for (Map.Entry<String, Point> entry : countryPositions.entrySet()) {
                     Point original = entry.getValue();
                     int x = (int) (original.x * scaleX);
@@ -59,6 +77,7 @@ public class ClientBoard extends JPanel {
                     int dx = e.getX() - x;
                     int dy = e.getY() - y;
 
+                    // If click is within territory circle (radius 10)
                     if (dx * dx + dy * dy <= 100) {
                         System.out.println("Clicked on: " + entry.getKey());
                         if (clickHandler != null) {
@@ -69,11 +88,14 @@ public class ClientBoard extends JPanel {
                 }
             }
         });
-
     }
 
+    /**
+     * Initializes all territories with their positions on the map
+     * Each territory is added with its name and x,y coordinates
+     */
     private void initializeCountries() {
-
+        // Add all territories with their positions
         addCountry("Afghanistan", 810, 260);
         addCountry("Alaska", 100, 130);
         addCountry("Alberta", 220, 190);
@@ -122,12 +144,25 @@ public class ClientBoard extends JPanel {
         addCountry("Yakutsk", 1040, 130);
     }
 
+    /**
+     * Adds a new territory to the game board
+     * 
+     * @param name Territory name
+     * @param x X coordinate on the map
+     * @param y Y coordinate on the map
+     */
     private void addCountry(String name, int x, int y) {
         countryPositions.put(name, new Point(x, y));
         countryOwners.put(name, null);
         countryArmies.put(name, 0);
     }
 
+    /**
+     * Updates the game board with the current game state
+     * Updates territory ownership and army counts
+     * 
+     * @param gameState The current state of the game
+     */
     public void updateGameState(CommonState gameState) {
         for (CommonTerritory t : gameState.getTerritories().values()) {
             String name = t.getName();
@@ -146,41 +181,48 @@ public class ClientBoard extends JPanel {
         repaint();
     }
 
+    /**
+     * Paints the game board
+     * Draws the map, territories, armies, and territory names
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Draw the background map
         if (mapImage != null) {
             g.drawImage(mapImage, 0, 0, getWidth(), getHeight(), this);
         }
 
+        // Calculate scaling factors
         double scaleX = getWidth() / (double) mapImage.getWidth();
         double scaleY = getHeight() / (double) mapImage.getHeight();
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setFont(new Font("Arial", Font.BOLD, 13));
 
+        // Draw each territory
         for (String name : countryPositions.keySet()) {
             Point original = countryPositions.get(name);
 
             int x = (int) (original.x * scaleX);
             int y = (int) (original.y * scaleY);
 
+            // Set territory color based on owner
             String ownerColor = countryOwners.get(name);
             Color color = switch (ownerColor != null ? ownerColor.toUpperCase() : "") {
-                case "RED" ->
-                    Color.RED;
-                case "BLUE" ->
-                    Color.BLUE;
-                default ->
-                    Color.GRAY;
+                case "RED" -> Color.RED;
+                case "BLUE" -> Color.BLUE;
+                default -> Color.GRAY;
             };
 
+            // Draw territory circle
             g2.setColor(color);
             g2.fillOval(x - 10, y - 10, 20, 20);
             g2.setColor(Color.BLACK);
             g2.drawOval(x - 10, y - 10, 20, 20);
 
+            // Draw army count
             g2.setColor(Color.WHITE);
             String armyText = String.valueOf(countryArmies.get(name));
             FontMetrics fm = g2.getFontMetrics();
@@ -188,6 +230,7 @@ public class ClientBoard extends JPanel {
             int textHeight = fm.getAscent();
             g2.drawString(armyText, x - textWidth / 2, y + textHeight / 3);
 
+            // Draw territory name
             g2.setFont(new Font("Arial", Font.PLAIN, 11));
             FontMetrics nameFm = g2.getFontMetrics();
             int nameWidth = nameFm.stringWidth(name);
@@ -196,5 +239,4 @@ public class ClientBoard extends JPanel {
             g2.setFont(new Font("Arial", Font.BOLD, 13));
         }
     }
-
 }
