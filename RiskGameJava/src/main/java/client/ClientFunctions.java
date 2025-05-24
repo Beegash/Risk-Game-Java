@@ -16,7 +16,6 @@ import client.dialogs.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class ClientFunctions implements ClientMessageListener {
     // Core game components
@@ -168,8 +167,8 @@ public class ClientFunctions implements ClientMessageListener {
      */
     private void connectToServer() {
         try {
-            //client = new ClientGame("13.51.109.85", 3131, this);
-            client = new ClientGame("localhost", 3131, this);
+            client = new ClientGame("13.51.109.85", 3131, this);
+            //client = new ClientGame("localhost", 3131, this);
 
             CommonMessages joinMove = new CommonMessages(CommonMessages.Type.JOIN, currentPlayerName);
             client.sendMove(joinMove);
@@ -237,7 +236,6 @@ public class ClientFunctions implements ClientMessageListener {
         this.currentGameState = gameState;
         boardPanel.updateGameState(gameState);
         String currentTurn = gameState.getCurrentTurnPlayer();
-        CommonPlayer currentPlayer = gameState.getPlayers().get(currentTurn);
         CommonPlayer me = gameState.getPlayers().get(currentPlayerName);
         boolean isMyTurn = currentPlayerName.equals(currentTurn);
         int myRemainingArmies = me.getAvailableArmies();
@@ -283,13 +281,6 @@ public class ClientFunctions implements ClientMessageListener {
      */
     public void onPlayerLeft(String message) {
         UIGameMessageManager.showGameOver(mainFrame, message, UIGameMessageManager.GameOverType.PLAYER_LEFT, client);
-    }
-
-    /**
-     * Restarts the game application
-     */
-    private void restartApp() {
-        SwingUtilities.invokeLater(() -> new ClientFunctions(currentPlayerName));
     }
 
     /**

@@ -69,7 +69,11 @@ public class ServerHandler implements Runnable {
             sendInitialGameState();
             handleGameLoop();
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Player " + (playerName != null ? playerName : "unknown") + " disconnected: " + e.getMessage());
+            String errorMessage = e.getMessage();
+            if (errorMessage == null) {
+                errorMessage = "Player left the game";
+            }
+            LOGGER.log(Level.SEVERE, "Player " + (playerName != null ? playerName : "unknown") + " disconnected: " + errorMessage);
             handleDisconnection();
         }
     }

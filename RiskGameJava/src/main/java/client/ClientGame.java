@@ -82,6 +82,9 @@ public class ClientGame {
                             listener.onVictory(move.getMessage());
                         case LOSE ->
                             listener.onDefeat(move.getMessage());
+                        default ->
+                            // Handle other message types through game state updates
+                            listener.onGameStateReceived(null);
                     }
                 }
             }

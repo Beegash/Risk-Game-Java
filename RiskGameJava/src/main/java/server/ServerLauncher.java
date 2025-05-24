@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.*;
 
-public class ServerMain {
+public class ServerLauncher {
     /** Default port number for the game server */
     public static final int PORT = 3131;
 

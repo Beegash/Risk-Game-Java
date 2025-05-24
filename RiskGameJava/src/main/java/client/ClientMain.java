@@ -105,8 +105,8 @@ public class ClientMain extends JFrame {
                 new Thread(() -> {
                     try {
                         // Initialize game client and connect to server
-                        //ClientGame tempClient = new ClientGame("13.51.109.85", 3131, new ClientMessageListener() {
-                        ClientGame tempClient = new ClientGame("localhost", 3131, new ClientMessageListener() {
+                        ClientGame tempClient = new ClientGame("13.51.109.85", 3131, new ClientMessageListener() {
+                        //ClientGame tempClient = new ClientGame("localhost", 3131, new ClientMessageListener() {
                             @Override
                             public void onGameStateReceived(common.CommonState gameState) {
                                 // Launch the game when server responds

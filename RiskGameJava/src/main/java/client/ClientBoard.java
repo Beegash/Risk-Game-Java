@@ -21,11 +21,12 @@ import java.util.function.Consumer;
 
 public class ClientBoard extends JPanel {
     // Game board visual components
+    @SuppressWarnings("unused")
+    private Consumer<String> clickHandler;             // Callback for territory clicks
     private BufferedImage mapImage;                    // The background map image
     private Map<String, Point> countryPositions;       // Territory positions on the map
     private Map<String, String> countryOwners;         // Current owner of each territory
     private Map<String, Integer> countryArmies;        // Number of armies in each territory
-    private Consumer<String> clickHandler;             // Callback for territory clicks
 
     /**
      * Constructor for the game board

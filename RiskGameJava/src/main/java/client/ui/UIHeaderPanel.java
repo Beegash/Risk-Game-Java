@@ -72,9 +72,17 @@ public class UIHeaderPanel extends JPanel {
      * @return Configured JLabel with the Risk logo
      */
     private JLabel createLogoLabel() {
-        JLabel label = new JLabel("Risk");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        label.setForeground(UIConstants.Colors.TEXT_PRIMARY);
+        JLabel label = new JLabel();
+        try {
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("/images/RiskLogo.png"));
+            Image scaledImage = logoIcon.getImage().getScaledInstance(150, 45, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            // Fallback to text if image loading fails
+            label.setText("Risk");
+            label.setFont(new Font("Segoe UI", Font.BOLD, 24));
+            label.setForeground(UIConstants.Colors.TEXT_PRIMARY);
+        }
         return label;
     }
 

@@ -48,10 +48,45 @@ public class UIChatPanel extends JPanel {
 
     /**
      * Appends a new message to the chat area
+     * Formats dice roll messages and battle results with special styling
      * 
      * @param message The message to be added to the chat
      */
     public void appendMessage(String message) {
-        chatArea.append(message + "\n");
+        if (message.startsWith("Dice |")) {
+            // Format dice roll message
+            String[] parts = message.split("\\|");
+            String attackerPart = parts[1].trim();
+            String defenderPart = parts[2].trim();
+            
+            String formattedMessage = String.format(
+                "🎲 DICE ROLL\n" +
+                "⚔️ Attacker: %s\n" +
+                "🛡️ Defender: %s\n",
+                attackerPart.replace("Attacker:", "").trim(),
+                defenderPart.replace("Defender:", "").trim()
+            );
+            chatArea.append(formattedMessage + "\n");
+        } else if (message.startsWith("Losses |")) {
+            // Format battle results message
+            String[] parts = message.split("\\|")[1].split(",");
+            String attackerLoss = parts[0].replace("Attacker:", "").trim();
+            String defenderLoss = parts[1].replace("Defender:", "").trim();
+            
+            String formattedMessage = String.format(
+                "💥 BATTLE RESULTS\n" +
+                "⚔️ Attacker lost: %s armies\n" +
+                "🛡️ Defender lost: %s armies\n",
+                attackerLoss,
+                defenderLoss
+            );
+            chatArea.append(formattedMessage + "\n");
+        } else {
+            // Regular message
+            chatArea.append(message + "\n");
+        }
+        
+        // Scroll to bottom
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 } 
